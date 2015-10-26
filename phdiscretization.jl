@@ -1,5 +1,5 @@
 include("lgwt.jl")
-include("..\Calculus.jl\src\Calculus.jl")
+include("../ForwardDiff.jl/src/ForwardDiff.jl")
 function leg_pol(x,xi,j)
 	# evaluate the "j" Lagrange polynomial at point "x"
 	P = 1.;
