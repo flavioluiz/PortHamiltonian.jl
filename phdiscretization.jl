@@ -1,7 +1,17 @@
+# * higher order? rdiff? ctaylor? audi?
+# * moulla2
+# * test cases: fluid, beam
+# * Hamiltonian function -> use forwarddiff for gradient and Hessian?
+# * automatic coupling phs?
+# * better way to simulate?
+# * automatic subdivide in elements?
+
+
 include("lgwt.jl")
 include("../ForwardDiff.jl/src/ForwardDiff.jl")
 function leg_pol(x,xi,j)
-	# evaluate the "j" Lagrange polynomial at point "x"
+	# evaluate the "j" Lagrange polynomial defined using
+    # the collocation points "xi" at point "x"
 	P = 1.;
         for k = 1:length(xi)
 	        if (k != j)
@@ -35,24 +45,31 @@ end
 
 function massmatrix(N,a,b)
 	xi,wi = lgwt(N+1,a,b)
-	zi,wiz = lgwt(N,a,b)
+	if N > 1
+		zi,wiz = lgwt(N,a,b)
+	else
+		zi,wiz = (a+b)/2, (b-a);
+	end
 	Mass = zeros(length(zi),length(xi));
 	for i = 1:length(zi)
 		for j = 1:length(xi)
 			Mass[i:i,j] = massij(xi,zi,i,j,wi)
 		end
 	end
-	return Mass
+	return Mass, wiz
 end
 
 type Phs
 	J;
 	B;
 	D;
+	wi;
+    zi;
+	Q;
 end
 
 function moulla(N,a,b)
-	M = massmatrix(N,a,b);
+	M,wi = massmatrix(N,a,b);
 	D,xi,zi = dermatrix(N,a,b);
 	p0 = pol_vec(a,xi);
 	pL = pol_vec(b,xi);
@@ -70,15 +87,27 @@ function moulla(N,a,b)
     phB = -[J[[1:N;N+2:2*N+1],N+1] J[[1:N;(N+2):(2*N+1)],end]];
     phD = [J[N+1,N+1] J[N+1,end];
         J[end,N+1] J[end,end]];
-
-	return Phs(phJ, phB, phD)
+	phw = wi;
+	phzi = zi;
+	if N > 1
+		Q = sparse(diagm(wi[:],0));
+		Q = blkdiag(Q,Q);
+		else
+		Q = diagm([wi; wi]);
+	end
+	
+	return Phs(phJ, phB, phD, phw,phzi,Q)
 end
 
 function dermatrix(N,a,b)
 	#xi = cos(pi*(1:1:(N+1))/(N+2))
 	#zi = cos(pi*(1:1:(N))/(N+1))
 	xi,wi = lgwt(N+1,a,b)
-	zi,wiz = lgwt(N,a,b)
+	if N > 1
+		zi,wiz = lgwt(N,a,b)
+	else
+		zi,wiz = (a+b)/2, (b-a);
+	end
 	D = zeros(length(zi),length(xi))
 	for j = 1:length(xi)
 		g = ForwardDiff.derivative(x-> leg_pol(x,xi,j))

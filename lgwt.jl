@@ -1,3 +1,11 @@
+# Legendre-Gauss quadrature weights and nodes
+# This code was originally written for Matlab
+#  by Greg von Winckel - 02/25/2004
+# posted on Mathworks website and licensed under BSD License
+# http://fr.mathworks.com/matlabcentral/fileexchange/4540-legendre-gauss-quadrature-weights-and-nodes
+# 
+# 
+
 function lgwt(N,a,b)
 
 	N=N-1;
