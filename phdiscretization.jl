@@ -8,8 +8,13 @@
 
 
 include("lgwt.jl")
+include("derivative.jl")
+include("massmatrix.jl")
 include("../ForwardDiff.jl/src/ForwardDiff.jl")
-function leg_pol(x,xi,j)
+function leg_pol(x :: Array,xi :: Array,j :: Integer)
+	leg_pol(x[1],xi,j)
+end
+function leg_pol(x :: Number,xi :: Array,j :: Integer)
 	# evaluate the "j" Lagrange polynomial defined using
     # the collocation points "xi" at point "x"
 	P = 1.;
@@ -21,44 +26,6 @@ function leg_pol(x,xi,j)
     return P
 end
 
-function pol_vec(x,xi)
-	# evaluate each Lagrange polynomial at point 'x'
-	P = zeros(length(xi),1);
-	for i = 1:length(xi)
-		P[i] = leg_pol(x,xi,i)
-	end
-	return P
-end
-
-function massij(xi,zi,i,j,wi)
-	# to compute the mass matrix by quadrature,
-	# we only need to compute the value of the
-	# polynomials at point xi[j]!
-	
-	# xi has enough points for exactly interpolating
-	# the polynomial given by the product of phi_i(x)*psi_j(x)
-	
-	# but phi_i(x) = 1 at xi[i] and 0 otherwise.
-	# for this reason:
-	return leg_pol(xi[j],zi,i)*wi[j]
-end
-
-function massmatrix(N,a,b)
-	xi,wi = lgwt(N+1,a,b)
-	if N > 1
-		zi,wiz = lgwt(N,a,b)
-	else
-		zi,wiz = (a+b)/2, (b-a);
-	end
-	Mass = zeros(length(zi),length(xi));
-	for i = 1:length(zi)
-		for j = 1:length(xi)
-			Mass[i:i,j] = massij(xi,zi,i,j,wi)
-		end
-	end
-	return Mass, wiz
-end
-
 type Phs
 	J;
 	B;
@@ -68,11 +35,20 @@ type Phs
 	Q;
 end
 
-function moulla(N,a,b)
-	M,wi = massmatrix(N,a,b);
-	D,xi,zi = dermatrix(N,a,b);
-	p0 = pol_vec(a,xi);
-	pL = pol_vec(b,xi);
+function discrete_phs(N,a,b)
+	Nz = N
+	Nx = Nz+1
+	xi,wi = lgwt(Nx,a,b)
+	if Nz > 1
+		zi,wiz = lgwt(Nz,a,b)
+	else
+		zi,wiz = (a+b)/2, (b-a);
+	end
+	M = massmatrix(xi,zi,wi);
+	D = dermatrix(xi,zi,1);
+	p0 = map(i->leg_pol(a,xi,i), 1:length(xi))
+	pL = map(i->leg_pol(b,xi,i), 1:length(xi))
+	
 	F = [M 0*M;
 	     pL' pL'*0;
 		 0*M M;
@@ -87,46 +63,15 @@ function moulla(N,a,b)
     phB = -[J[[1:N;N+2:2*N+1],N+1] J[[1:N;(N+2):(2*N+1)],end]];
     phD = [J[N+1,N+1] J[N+1,end];
         J[end,N+1] J[end,end]];
-	phw = wi;
+	phw = wiz;
 	phzi = zi;
 	if N > 1
 		Q = sparse(diagm(wi[:],0));
 		Q = blkdiag(Q,Q);
 		else
-		Q = diagm([wi; wi]);
+		Q = diagm([wi; wi][:]);
 	end
 	
 	return Phs(phJ, phB, phD, phw,phzi,Q)
 end
 
-function dermatrix(N,a,b)
-	#xi = cos(pi*(1:1:(N+1))/(N+2))
-	#zi = cos(pi*(1:1:(N))/(N+1))
-	xi,wi = lgwt(N+1,a,b)
-	if N > 1
-		zi,wiz = lgwt(N,a,b)
-	else
-		zi,wiz = (a+b)/2, (b-a);
-	end
-	D = zeros(length(zi),length(xi))
-	for j = 1:length(xi)
-		g = ForwardDiff.derivative(x-> leg_pol(x,xi,j))
-		for i = 1:length(zi)		
-			D[i:i,j] = g(zi[i])
-		end
-	end
-	return D,xi,zi
-end
-
-function dermatrix2(N)
-	xi = cos(pi*(1:1:(N+2))/(N+3))
-	zi = cos(pi*(1:1:(N))/(N+1))
-	D = zeros(length(zi),length(xi))
-	for j = 1:length(xi)
-		g = ForwardDiff.hessian(x-> leg_pol(x,xi,j))
-		for i = 1:length(zi)		
-			D[i:i,j] = g([zi[i]])
-		end
-	end
-	return D,xi,zi
-end
