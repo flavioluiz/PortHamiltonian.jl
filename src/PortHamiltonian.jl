@@ -25,18 +25,29 @@ function leg_pol(x :: Number,xi :: Array,j :: Integer)
         for k = 1:length(xi)
 	        if (k != j)
 		        P = P*(x[1]-xi[k])/(xi[j]-xi[k])
+				#println((x[1]-xi[k])/(xi[j]-xi[k]))
             end
         end
     return P
 end
 
 type Phs
-	J;
-	B;
-	D;
-	wi;
-    zi;
-	Q;
+	J :: Array; # interconnection matrix
+	B :: Array; # control/output matrix
+	D :: Array; # direct matrix
+	Q;  # Q matrix, optional
+	Hamiltonian :: Function; # Hamiltonian
+	GradHam :: Function; # Hamiltonian gradient
+end
+
+type discretization
+	flow      # zi
+	effort    # xi
+end
+
+type discrete_domain
+	xi
+	wi
 end
 
 end

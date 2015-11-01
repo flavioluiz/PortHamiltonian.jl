@@ -35,5 +35,5 @@ function discrete_phs(N,a,b)
 		Q = diagm([wiz; wiz][:]);
 	end
 	
-	return Phs(phJ, phB, phD, phw,phzi,Q)
+	return Phs(phJ, phB, phD, phw,phzi,Q),E,F
 end
