@@ -35,5 +35,14 @@ function discrete_phs(N,a,b)
 		Q = diagm([wiz; wiz][:]);
 	end
 	
-	return Phs(phJ, phB, phD, phw,phzi,Q),E,F
+	pflow = Collocation_points(zi, wiz)
+	peffort = Collocation_points(xi, wi)
+	
+	p = Phs(phJ, phB, phD, Q)
+	#p.Q = Q
+	p.disc_data = Discrete_domain(pflow, peffort)
+	#func(x :: Array) = (0.5*x'*p.Q*x)[1]
+	#p.Hamiltonian = func
+	#p.GradHam = ForwardDiff.gradient(p.Hamiltonian)
+	p
 end
