@@ -18,6 +18,7 @@ include("derivative.jl")
 include("massmatrix.jl")
 include("phdiscretization.jl")
 include("eigenphs.jl")
+include("constraint_elimination.jl")
 
 function leg_pol(x :: Array,xi :: Array,j :: Integer)
 	leg_pol(x[1],xi,j)

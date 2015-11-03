@@ -29,6 +29,7 @@ type Phs
 	G  :: Array # constraint matrix (optional)
 	Hamiltonian :: Function; # Hamiltonian
 	GradHam :: Function; # Hamiltonian gradient
+	hessian :: Function # Hamiltonian hessian
 	disc_data ::  Discrete_domain # discretization data
 	
 	function Phs(J :: Array, B :: Array, D :: Array, Ham :: Function)
@@ -46,6 +47,7 @@ type Phs
 		this.Hamiltonian = Ham
 		GHam(x :: Array) = Q*x
 		this.GradHam = GHam
+		this.hessian = x->Q
 		this
 	end
 end
