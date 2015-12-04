@@ -39,7 +39,7 @@ function eig(p :: Phs)
 		else
 			a,v = eig(p.J*p.Q)
 			ind = sortperm(imag(a))
-			return a[ind], v[ind,ind]
+			return a[ind], v[:,ind]
 		end
 	else
 		fprintln("Undefined Q matrix (nonlinear system?)!")
@@ -49,4 +49,9 @@ end
 
 function frequencies(a :: Array)
 		imag(a[imag(a).>=0])
+end
+
+function frequencies(ph :: Phs)
+	a,v = eig(ph)
+	return frequencies(a)
 end

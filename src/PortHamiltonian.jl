@@ -19,6 +19,8 @@ include("massmatrix.jl")
 include("phdiscretization.jl")
 include("eigenphs.jl")
 include("constraint_elimination.jl")
+include("spectral_element_phs.jl")
+
 
 function leg_pol(x :: Array,xi :: Array,j :: Integer)
 	leg_pol(x[1],xi,j)
