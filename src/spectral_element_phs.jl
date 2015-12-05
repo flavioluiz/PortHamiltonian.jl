@@ -25,9 +25,9 @@ function new_spectral_element_phs(Nel,Npol,a,b)
 			push!(neworder,ii)
 		end
 	end
-	neworder = [neworder;neworder+Npol]
-	phfull.J = phfull.J[neworder,neworder]
-	phfull.B = phfull.B[neworder,:]
+	#neworder = [neworder;neworder+Npol]
+	#phfull.J = phfull.J[neworder,neworder]
+	#phfull.B = phfull.B[neworder,:]
 	return phfull
 
 end
