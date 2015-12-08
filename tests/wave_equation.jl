@@ -1,3 +1,12 @@
+#
+# this file shows an example of pseudo-spectral discretization for PHS systems for wave equation
+#  three cases are presented. It should be used for verifying the discretization, eigenvalues,
+#  and constraint elimination methods. Three cases are tested:
+#         1) PHS with u = 0 (Neumann-Dirichlet B.C)
+#         2) PHS with y = 0 (Neumann-Dirichlet B.C, but with a constraint)
+#         3) PHS with y = 0 after removing the constraints.
+#
+
 # auxiliary function: used for printing results
 
 function print_table(table)
@@ -17,10 +26,10 @@ end
 
 # modules:
 using PortHamiltonian
-using PyPlot
+#using PyPlot
 
 
-N = 10;
+N = 20;
 a = 0.;
 b = 1.;
 
@@ -37,12 +46,13 @@ err = exact_freq - num_freq;
 # comparison between numerical and exact results:
 comp_table = [num_freq exact_freq err./exact_freq];
 comp_table = comp_table[1:10,:]
-@printf("\nNatural frequencies of the Dirichlet-Neumann B.C. wave equation (with u = 0)\n\n")
+@printf("\nNatural frequencies of the Dirichlet-Neumann B.C. wave equation (with u = 0)\n")
 @printf("exact\tnumeric\terror \n")
 print_table(comp_table)
-
+@printf("\t From a total %d frequencies, %d are represented with error less than 0.01\n", length(err), sum(abs(err) .< 0.01)) 
+@printf("\n\t %d are smaller than %.1e\n",sum(abs(err) .< eps()*1e6),eps()*1e6) 
 #plot the first five modes
-plot(ph.disc_data.flow.xi, real(eigvec[1:N,N+2]))
+#plot(ph.disc_data.flow.xi, real(eigvec[1:N,N+2]))
 
 # constrained version
 ph_constrained = deepcopy(ph);
@@ -56,12 +66,12 @@ err = exact_freq - num_freq;
 
 # comparison between numerical and exact results:
 comp_table = [num_freq exact_freq err./exact_freq]
-@printf("\nNatural frequencies of the Neumann-Dirichlet B.C. wave equation (with y = 0)\n\n")
+comp_table = comp_table[1:10,:]
+@printf("\nNatural frequencies of the Neumann-Dirichlet B.C. wave equation (with y = 0)\n")
 @printf("exact\tnumeric\terror \n")
 print_table(comp_table)
-
-
-
+@printf("\t\t From a total %d frequencies, %d are represented with error less than 0.01\n", length(err), sum(abs(err) .< 0.01)) 
+@printf("\n\t %d are smaller than %.1e\n",sum(abs(err) .< eps()*1e6),eps()*1e6) 
 ## find an explicit equivalent system
 ph_c_elim = constraint_elimination(ph_constrained)
 eigval, eigvec = eig(ph_c_elim);
@@ -72,6 +82,8 @@ err = exact_freq - num_freq;
 # comparison between numerical and exact results:
 comp_table = [num_freq exact_freq err./exact_freq]
 comp_table = comp_table[1:10,:]
-@printf("\nNatural frequencies of the Neumann-Dirichlet B.C. wave equation (with y=0 after constraint elimination)\n\n")
+@printf("\nNatural frequencies of the Neumann-Dirichlet B.C. wave equation (with y=0 after constraint elimination)\n")
 @printf("exact\tnumeric\terror \n")
 print_table(comp_table)
+@printf("\t\t From a total %d frequencies, %d are represented with error less than 0.01", length(err), sum(abs(err) .< 0.01)) 
+@printf("\n\t %d are smaller than %.1e\n",sum(abs(err) .< eps()*1e6),eps()*1e6) 
