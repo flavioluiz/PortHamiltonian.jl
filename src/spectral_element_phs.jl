@@ -1,14 +1,3 @@
-type linearstvenant
-	phs::Phs
-	
-	
-	function linearstvenant(N)
-		this = new()
-		this.phs = moulla(N,-1,1);
-		return this
-	end
-end
-
 function new_spectral_element_phs(Nel,Npol,a,b)
 	dx = (b-a)/Nel
 	ph = discrete_phs(Npol,0.,dx);
@@ -18,10 +7,10 @@ function new_spectral_element_phs(Nel,Npol,a,b)
 	wvec = zeros(length(wi)*Nel)
 	
 	phfull = ph
-	neworder = (Nel-1)*Npol*2 + [1:Npol]
+	neworder = (Nel-1)*Npol*2 + collect(1:Npol)
 	for e = 2:Nel
 		phfull = PortHamiltonian.coupled_gyrator(phfull,[2],ph,[1],1)
-		for ii = (Nel-e)*Npol*2 + [1:Npol]
+		for ii = (Nel-e)*Npol*2 + collect(1:Npol)
 			push!(neworder,ii)
 		end
 	end
@@ -42,11 +31,11 @@ function new_block_spectral_element_phs(Nel,Npol,a,b)
 	blockph = Phs([0 -1;1 0], [1 0;0. -1], zeros(2,2), eye(2)*1e5)
 	
 	phfull = ph
-	neworder = (Nel-1)*Npol*2 + [1:Npol]
+	neworder = (Nel-1)*Npol*2 + collect(1:Npol)
 	for e = 2:Nel
 		phfull = PortHamiltonian.coupled_gyrator(phfull,[2],blockph,[1],1)
 		phfull = PortHamiltonian.coupled_gyrator(phfull,[2],ph,[1],1)
-		for ii = (Nel-e)*Npol*2 + [1:Npol]
+		for ii = (Nel-e)*Npol*2 + collect(1:Npol)
 			push!(neworder,ii)
 		end
 	end

@@ -1,15 +1,15 @@
 
-function blkd(A :: Array,B :: Array)
-	# block diagonal matrix of A and B
-	al = size(A,1)
-	ac = size(A,2)
-	bl = size(B,1)
-	bc = size(B,2)
-	C = zeros(al+bl, ac + bc)
-	C[1:al, 1:ac] = A
-	C[al+1:end, ac+1:end] = B
-	C
-end
+#function blkd(A :: Array,B :: Array)
+#	# block diagonal matrix of A and B
+#	al = size(A,1)
+#	ac = size(A,2)
+#	bl = size(B,1)
+#	bc = size(B,2)
+#	C = zeros(al+bl, ac + bc)
+#	C[1:al, 1:ac] = A
+#	C[al+1:end, ac+1:end] = B
+#	C
+#end
 function eig(p :: Phs)
 	# computes the eigenvalues and eigenvectors of a linear PHS
 	#  (which haves a Q matrix!)
@@ -30,9 +30,9 @@ function eig(p :: Phs)
 			nconst = size(p.G,2)
 			I = eye(size(p.J,1))
 			z = zeros(nconst,nconst)
-			E = blkd(I,z)
+			E = blkdiag(I,z)
 			A = [p.J*p.Q p.G;
-			     p.G'*p.Q zeros(nconst,nconst)]
+			     p.G'*p.Q p.G_D]
 			e = eigfact(A,E)
 			ind = sortperm(imag(e.values))
 			return e.values[ind], e.vectors[ind,ind]

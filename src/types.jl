@@ -27,6 +27,7 @@ type Phs
 	D :: Array; # direct matrix
 	Q  # Q matrix, optional
 	G  :: Array # constraint matrix (optional)
+	G_D :: Array # direct term constraint matrix (optional)
 	Hamiltonian :: Function; # Hamiltonian
 	GradHam :: Function; # Hamiltonian gradient
 	hessian :: Function # Hamiltonian hessian
@@ -50,6 +51,13 @@ type Phs
 		this.hessian = x->Q
 		this
 	end
+end
+function set_constraint!(ph :: Phs, G, G_D)
+	ph.G = G;
+	ph.G_D = G_D;
+end
+function set_constraint!(ph ::Phs, G)
+	set_constraint(ph, G, zeros(size(G,2),size(G,2)));
 end
 function show(io ::IO, object :: Phs)
 	println(io, "Port Hamiltonian system")

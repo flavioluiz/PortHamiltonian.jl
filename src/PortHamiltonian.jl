@@ -5,14 +5,27 @@
 # * automatic coupling phs?
 # * better way to simulate?
 # * automatic subdivide in elements?
+__precompile__()
 
 module PortHamiltonian
 
 using ForwardDiff
-import Base.show
-import Base.eig
-import Base.blkdiag
 
+
+###########
+# imports # 
+########### 
+# additional functionality is added to the following Base functions:
+import Base: show, eig, blkdiag
+
+###########
+# exports #
+###########
+export set_constraint!,
+	   frequencies,
+	   constraint_elimination,
+	   coupled_gyrator,
+	   discrete_phs
 
 function blkdiag(x :: Array, y :: Array)
 	res = zeros(size(x,1)+size(y,1),size(x,2)+size(y,2));
