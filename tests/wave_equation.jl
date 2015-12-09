@@ -29,7 +29,7 @@ using PortHamiltonian
 #using PyPlot
 
 
-N = 20;
+N = 100;
 a = 0.;
 b = 1.;
 
