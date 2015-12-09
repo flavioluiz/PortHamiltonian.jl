@@ -131,18 +131,18 @@ function discrete_phs2_distports(N,K,a,b,ad,bd)
 	pLd = map(i->leg_pol_der(i)(b), 1:length(zei))
 	
 	F = [M 0*M;
-	     pL' pL'*0;
-	     pLd' pL'*0
+	     p0' pL'*0;
+	     p0d' pL'*0
 		 0*M M;
-	     0*pLd' p0d'
-		 0*p0' p0'];
+	     0*pLd' pLd'
+		 0*p0' pL'];
 	F = blkdiag(F,eye(K));
 	E = [D*0 D;
-	      pL'*0 -pLd';
-	      pL'*0  pL';
+	      pL'*0 p0d';
+	      pL'*0  -p0';
 	       -D D*0;
-	       p0' p0'*0;
-	      -p0d' p0'*0];
+	       -pL' p0'*0;
+	      pLd' p0'*0];
 	E = blkdiag(E, zeros(K,K));
 	E[1:size(D,1),end-K+1:end] = - B_bar;
     E[end-K+1:end,1:size(D,2)] =  B_bar' * M;
