@@ -36,3 +36,18 @@ function massmatrix(xi :: Array, zi :: Array, wi :: Array, int_polynomial = leg_
 	end
 	Mass
 end
+
+function Q_partial(p :: Phs, a, b)
+	xi = p.disc_data.flow.xi;
+	N = length(xi);
+	zi,wzi = lgwt(N*2,a,b);
+	Q_parts = zeros(N,N);
+	for i = 1:N
+		for j = 1:N
+			for k = 1:length(zi)
+				Q_parts[i,j] += wzi[k]*leg_pol(zi[k],xi,i)*leg_pol(zi[k],xi,j)
+			end
+		end
+	end
+	return Q_parts
+end
