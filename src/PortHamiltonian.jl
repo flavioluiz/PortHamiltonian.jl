@@ -25,7 +25,9 @@ export set_constraint!,
 	   frequencies,
 	   constraint_elimination,
 	   coupled_gyrator,
-	   discrete_phs
+	   discrete_phs,
+	   discrete_phs2,
+	   discrete_phs2_distports
 
 function blkdiag(x :: Array, y :: Array)
 	res = zeros(size(x,1)+size(y,1),size(x,2)+size(y,2));

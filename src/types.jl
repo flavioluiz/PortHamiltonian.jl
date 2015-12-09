@@ -24,6 +24,7 @@ end
 type Phs
 	J :: Array; # interconnection matrix
 	B :: Array; # control/output matrix
+	Bd :: Array; # distributed control matrix (optional)
 	D :: Array; # direct matrix
 	Q  # Q matrix, optional
 	G  :: Array # constraint matrix (optional)

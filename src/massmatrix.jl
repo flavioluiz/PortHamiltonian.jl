@@ -1,5 +1,5 @@
 
-function massij(xi,zi,i,j,wi)
+function massij(xi,zi,i,j,wi, int_polynomial)
 	# to compute the mass matrix by quadrature,
 	# we only need to compute the value of the
 	# polynomials at point xi[j]!
@@ -9,7 +9,7 @@ function massij(xi,zi,i,j,wi)
 	
 	# but phi_i(x) = 1 at xi[i] and 0 otherwise.
 	# for this reason:
-	return leg_pol(xi[j],zi,i)*wi[j]
+	return int_polynomial(xi[j],zi,i)*wi[j]
 end
 
 function massmatrix(N :: Integer ,a :: Number,b :: Number, order = 1)
@@ -27,11 +27,11 @@ function massmatrix(xi :: Array, zi :: Number, wi :: Array)
 	massmatrix(xi, [zi], wi)
 end
 
-function massmatrix(xi :: Array, zi :: Array, wi :: Array)
+function massmatrix(xi :: Array, zi :: Array, wi :: Array, int_polynomial = leg_pol)
 	Mass = zeros(length(zi),length(xi));
 	for i = 1:length(zi)
 		for j = 1:length(xi)
-			Mass[i:i,j] = massij(xi,zi,i,j,wi)
+			Mass[i:i,j] = massij(xi,zi,i,j,wi, int_polynomial)
 		end
 	end
 	Mass
