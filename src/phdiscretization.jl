@@ -1,16 +1,16 @@
 function discrete_phs(N,a,b)
-	Nz = N
-	Nx = Nz+1
-	xi,wi = lgwt(Nx,a,b)
-	if Nz > 1
-		zi,wiz = lgwt(Nz,a,b)
+	Nx = N   	#    energy variables: x
+	Ne = Nx+1   # co-energy variables: e
+	ei,we = lgwt(Ne,a,b)    # discretization of co-energy variables
+	if Nx > 1
+		xi,wx = lgwt(Nx,a,b)
 	else
-		zi,wiz = (a+b)/2, (b-a);
+		xi,wx = (a+b)/2, (b-a);
 	end
-	M = massmatrix(xi,zi,wi);
-	D = dermatrix(xi,zi,1);
-	p0 = map(i->leg_pol(a,xi,i), 1:length(xi))
-	pL = map(i->leg_pol(b,xi,i), 1:length(xi))
+	M = massmatrix(ei,xi,we);
+	D = dermatrix(ei,xi,1);
+	p0 = map(i->leg_pol(a,ei,i), 1:length(ei))
+	pL = map(i->leg_pol(b,ei,i), 1:length(ei))
 	
 	F = [M 0*M;
 	     pL' pL'*0;
@@ -26,17 +26,16 @@ function discrete_phs(N,a,b)
     phB = -[J[[1:N;N+2:2*N+1],N+1] J[[1:N;(N+2):(2*N+1)],end]];
     phD = [J[N+1,N+1] J[N+1,end];
         J[end,N+1] J[end,end]];
-	phw = wiz;
-	phzi = zi;
+		
 	if N > 1
-		Q = sparse(diagm(wiz[:],0));
+		Q = sparse(diagm(wx[:],0));
 		Q = blkdiag(Q,Q);
 		else
-		Q = diagm([wiz; wiz][:]);
+		Q = diagm([wx; wx][:]);
 	end
 	
-	pflow = Collocation_points(zi, wiz)
-	peffort = Collocation_points(xi, wi)
+	pflow = Collocation_points(xi, wx)
+	peffort = Collocation_points(ei, we)
 	
 	p = Phs(phJ, phB, phD, Q)
 	#p.Q = Q
@@ -49,21 +48,21 @@ end
 
 
 function discrete_phs2(N,a,b)
-	Nz = N
-	Nx = Nz+2
-	xi,wi = lgwt(Nx,a,b)
-	if Nz > 2
-		zi,wiz = lgwt(Nz,a,b)
+	Nx = N
+	Ne = Nx+2
+	ei,wi = lgwt(Ne,a,b)
+	if Nx > 2
+		xi,wx = lgwt(Nx,a,b)
 	else
-		zi,wiz = (a+b)/2, (b-a);
+		xi,wx = (a+b)/2, (b-a);
 	end
-	M = massmatrix(xi,zi,wi);
-	D = dermatrix(xi,zi,2);
-	leg_pol_der = i -> (algo_diff(x->leg_pol(x,xi,i), 1))
-	p0 = map(i->leg_pol(a,xi,i), 1:length(xi))
-	p0d = map(i->leg_pol_der(i)(a), 1:length(xi))
-	pL = map(i->leg_pol(b,xi,i), 1:length(xi))
-	pLd = map(i->leg_pol_der(i)(b), 1:length(xi))
+	M = massmatrix(ei,xi,wi);
+	D = dermatrix(ei,xi,2);
+	leg_pol_der = i -> (algo_diff(x->leg_pol(x,ei,i), 1))
+	p0 = map(i->leg_pol(a,ei,i), 1:length(ei))
+	p0d = map(i->leg_pol_der(i)(a), 1:length(ei))
+	pL = map(i->leg_pol(b,ei,i), 1:length(ei))
+	pLd = map(i->leg_pol_der(i)(b), 1:length(ei))
 	
 	F = [M 0*M;
 	     pL' pL'*0;
@@ -77,25 +76,22 @@ function discrete_phs2(N,a,b)
 	       -D D*0;
 	       p0' p0'*0;
 	      -p0d' p0'*0];
-		  J = E/F
-		  print (norm(J+J'))
-	neworder = [1:N, (1:N)+N+2, N+1:N+2, 2*N+3:2*N+4];
+	J = E/F
+	neworder = [1:N; (1:N)+N+2; N+1:N+2; 2*N+3:2*N+4];
     Jnew = J[neworder,neworder]
     phJ = -Jnew[1:2*N,1:2*N];
     phB = - Jnew[1:2*N, 2*N+(1:4)];
     phD = Jnew[2*N+(1:4), 2*N+(1:4)];
     
-	phw = wiz;
-	phzi = zi;
 	if N > 1
-		Q = sparse(diagm(wiz[:],0));
+		Q = sparse(diagm(wx[:],0));
 		Q = blkdiag(Q,Q);
 		else
-		Q = diagm([wiz; wiz][:]);
+		Q = diagm([wx; wx][:]);
 	end
 	
-	pflow = Collocation_points(zi, wiz)
-	peffort = Collocation_points(xi, wi)
+	pflow = Collocation_points(xi, wx)
+	peffort = Collocation_points(ei, wi)
 	
 	p = Phs(phJ, phB, phD, Q)
 	#p.Q = Q
