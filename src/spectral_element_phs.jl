@@ -14,12 +14,32 @@ function new_spectral_element_phs(Nel,Npol,a,b)
 			push!(neworder,ii)
 		end
 	end
-	#neworder = [neworder;neworder+Npol]
-	#phfull.J = phfull.J[neworder,neworder]
-	#phfull.B = phfull.B[neworder,:]
+	neworder = [neworder;neworder+Npol]
+	phfull.J = phfull.J[neworder,neworder]
+	phfull.B = phfull.B[neworder,:]
 	return phfull
 
 end
+
+function new_spectral_element_phs_golo(Nel,alfa,a,b)
+	dx = (b-a)/Nel
+	ph = Phs([0 -1/alfa;1/alfa 0], [1/alfa 0;0. -1/alfa], [0 -(1-alfa)/alfa;0. -(alfa-1)/alfa], eye(2)/dx)
+	Npol = 1
+	phfull = ph
+	neworder = (Nel-1)*Npol*2 + collect(1:Npol)
+	for e = 2:Nel
+		phfull = PortHamiltonian.coupled_gyrator(phfull,[2],ph,[1],1)
+		for ii = (Nel-e)*Npol*2 + collect(1:Npol)
+			push!(neworder,ii)
+		end
+	end
+	neworder = [neworder;neworder+Npol]
+	phfull.J = phfull.J[neworder,neworder]
+	phfull.B = phfull.B[neworder,:]
+	return phfull
+
+end
+
 
 function new_block_spectral_element_phs(Nel,Npol,a,b)
 	dx = (b-a)/Nel
