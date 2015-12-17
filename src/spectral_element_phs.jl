@@ -23,7 +23,7 @@ end
 
 function new_spectral_element_phs_golo(Nel,alfa,a,b)
 	dx = (b-a)/Nel
-	ph = Phs([0 -1/alfa;1/alfa 0], [1/alfa 0;0. -1/alfa], [0 -(1-alfa)/alfa;0. -(alfa-1)/alfa], eye(2)/dx)
+	ph = Phs([0 -1/alfa;1/alfa 0], [1/alfa 0;0. -1/alfa], [0 -(1-alfa)/alfa;-(alfa-1)/alfa 0], eye(2)/dx)
 	Npol = 1
 	phfull = ph
 	neworder = (Nel-1)*Npol*2 + collect(1:Npol)

@@ -1,12 +1,18 @@
 using PortHamiltonian
 
-#p = PortHamiltonian.new_spectral_element_phs(1,40,0,1)
-Nel = 10; alfa = 1.; a = 0; b = 1;
-p = PortHamiltonian.new_spectral_element_phs_golo(Nel,alfa,a,b)
-#p = discrete_phs(10,0,1)
+# mixed finite elements (Golo)
+#Nel = 10; alfa = 0.5; a = 0; b = 1;
+#p = PortHamiltonian.new_spectral_element_phs_golo(Nel,alfa,a,b)
 
-#Nel = 20;Npol = 1; a=0;b =1;
+# pseudo-spectral discretization (Moulla)
+p = discrete_phs(10,0,1)
+
+# pseudo-spectral "elements"
+#p = PortHamiltonian.new_spectral_element_phs(1,40,0,1)
+
+# pseudo-spectral elements mixed with golo alpha=1 elements:
 #p = PortHamiltonian.new_block_spectral_element_phs(Nel,Npol,a,b)
+
 Ns = size(p.J,1)
 freq = 1.*pi/2
 
