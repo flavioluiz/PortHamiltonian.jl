@@ -1,11 +1,16 @@
 using PortHamiltonian
 
 # mixed finite elements (Golo)
-#Nel = 10; alfa = 0.5; a = 0; b = 1;
+#Nel = 20; alfa = 0.5; a = 0; b = 1;
 #p = PortHamiltonian.new_spectral_element_phs_golo(Nel,alfa,a,b)
 
 # pseudo-spectral discretization (Moulla)
-p = discrete_phs(10,0,1)
+p = discrete_phs(50,0,e-1)
+wi = p.disc_data.flow.wi[:];
+xi = p.disc_data.flow.xi[:];
+Qi = diagm(wi .* (1 .*(1+xi)));
+p.Q = blkdiag(Qi, Qi)
+p.GradHam = x-> p.Q *x
 
 # pseudo-spectral "elements"
 #p = PortHamiltonian.new_spectral_element_phs(1,40,0,1)
@@ -14,7 +19,7 @@ p = discrete_phs(10,0,1)
 #p = PortHamiltonian.new_block_spectral_element_phs(Nel,Npol,a,b)
 
 Ns = size(p.J,1)
-freq = 1.*pi/2
+freq = 1.
 
 function dynamics(t,x, xd)
 	xd[:] = p.J * p.GradHam(x) + p.B[:,2] * sin(freq*t) - p.B[:,1] * output(t,x)
@@ -24,7 +29,7 @@ function output(t,x)
 end
 
 using Sundials
-to = collect(linspace(0,10/freq,1000))
+to = collect(linspace(0,10/freq,10000))
 x0 = zeros(Ns);
 res = Sundials.cvode(dynamics, x0, to)
 
@@ -36,6 +41,6 @@ end
 using PyPlot
 
 figure()
-plot(to+1, sin(freq*to),to, y)
+plot(to+1, sin(freq*to),to, y , to, (blkdiag(diagm(1./wi),diagm(1./wi)) * p.Q*res')[end/2+5,:]')
 figure()
 plot(to, y-(sin(freq*(to-1)).*(to.>=1)  ))
