@@ -54,19 +54,21 @@ type Phs
 	end
 end
 function set_constraint!(ph :: Phs, G, G_D)
-	ph.G = G;
-	ph.G_D = G_D;
+	if isdefined(ph, :G) warn("Constraint was already defined! overwriting!"); end
+	ph.G = G
+	ph.G_D = G_D
 end
 function set_constraint!(ph ::Phs, G)
-	set_constraint(ph, G, zeros(size(G,2),size(G,2)));
+	set_constraint!(ph, G, zeros(size(G,2),size(G,2)))
 end
 function show(io ::IO, object :: Phs)
 	println(io, "Port Hamiltonian system")
 	println(io, "...", size(object.J,2), " energy variables")
 	println(io, "...", size(object.B,2), " inputs/outputs")
 	println(io, ".J"); println(io, ".B");
-	if isdefined(object, :Q) println(io, ".Q"); end
 	println(io, ".D"); 
+	if isdefined(object, :Q) println(io, ".Q"); end
+	if isdefined(object, :G) println(io, ".G (constrained system)"); end
 	if isdefined(object, :Hamiltonian) println(io, ".Hamiltonian"); end
 	if isdefined(object, :GradHam) println(io, ".GradHam"); end
 	if isdefined(object, :disc_data) println(io, ".disc_data"); end
