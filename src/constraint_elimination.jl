@@ -21,9 +21,9 @@ function constraint_elimination(p :: Phs)
 			Qtilde = Minv'*p.Q*Minv
 			J11 = Jtilde[1:nstates-nconst,1:nstates-nconst]
 			Q11 = Qtilde[1:nstates-nconst,1:nstates-nconst]
-			Q12 = Qtilde[1:nstates-nconst,nstates+1:end]
-			Q21 = Qtilde[nstates+1:end,1:nstates-nconst]
-			Q22 = Qtilde[nstates+1:end,nstates+1:end]
+			Q12 = Qtilde[1:nstates-nconst,(end-nconst+1):end]
+			Q21 = Qtilde[(end-nconst+1):end,1:nstates-nconst]
+			Q22 = Qtilde[(end-nconst+1):end,(end-nconst+1):end]
 			Qn = Q11-Q12*inv(Q22)*Q21
 			return Phs(J11, Gnull * p.B, p.D, Qn)
 		elseif (det(p.G_D) > 1e8*eps(norm(p.J)))  # G_D is invertible
