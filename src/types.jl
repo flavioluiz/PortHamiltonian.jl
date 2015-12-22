@@ -70,4 +70,5 @@ function show(io ::IO, object :: Phs)
 	if isdefined(object, :Hamiltonian) println(io, ".Hamiltonian"); end
 	if isdefined(object, :GradHam) println(io, ".GradHam"); end
 	if isdefined(object, :disc_data) println(io, ".disc_data"); end
+	if isdefined(object, :Bd) println(io, ".Bd (distributed ports)"); end
 end
