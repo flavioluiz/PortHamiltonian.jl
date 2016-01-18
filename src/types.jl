@@ -27,6 +27,7 @@ type Phs
 	Bd :: Array; # distributed control matrix (optional)
 	D :: Array; # direct matrix
 	Q  # Q matrix, optional
+	R :: Array; # damping matrix (optional)
 	G  :: Array # constraint matrix (optional)
 	G_D :: Array # direct term constraint matrix (optional)
 	Hamiltonian :: Function; # Hamiltonian
@@ -67,10 +68,11 @@ function show(io ::IO, object :: Phs)
 	println(io, "...", size(object.B,2), " inputs/outputs")
 	println(io, ".J"); println(io, ".B");
 	println(io, ".D"); 
+	if isdefined(object, :R) println(io, ".R"); end
 	if isdefined(object, :Q) println(io, ".Q"); end
 	if isdefined(object, :G) println(io, ".G (constrained system)"); end
 	if isdefined(object, :Hamiltonian) println(io, ".Hamiltonian"); end
 	if isdefined(object, :GradHam) println(io, ".GradHam"); end
 	if isdefined(object, :disc_data) println(io, ".disc_data"); end
-	if isdefined(object, :Bd) println(io, ".Bd (distributed ports)"); end
+	if isdefined(object, :Bd) println(io, ".Bd (distributed ports)"); end	
 end
