@@ -1,13 +1,18 @@
 function discrete_phs(N,a,b)
 	Nx = N   	#    energy variables: x
 	Ne = Nx+1   # co-energy variables: e
+	
 	ei,we = lgwt(Ne,a,b)    # discretization of co-energy variables
+	#ei = collect(linspace(a,b,Ne,))
 	if Nx > 1
 		xi,wx = lgwt(Nx,a,b)
+		#xi = collect(linspace(a,b,Nx))
 	else
 		xi,wx = (a+b)/2, (b-a);
 	end
-	M = massmatrix(ei,xi,we);
+	#M = massmatrix(ei,xi,we);
+	xquad, wquad = lgwt(Ne,a,b)
+	M = massmatrix(ei,xi, xquad, wquad);
 	D = dermatrix(ei,xi,1);
 	p0 = map(i->leg_pol(a,ei,i), 1:length(ei))
 	pL = map(i->leg_pol(b,ei,i), 1:length(ei))
@@ -28,10 +33,11 @@ function discrete_phs(N,a,b)
         J[end,N+1] J[end,end]];
 		
 	if N > 1
-		Q = sparse(diagm(wx[:],0));
+		Q = massmatrix(xi,xi,xquad,wquad)
+		#Q = sparse(diagm(wx[:],0));
 		Q = blkdiag(Q,Q);
 		else
-		Q = diagm([wx; wx][:]);
+		#Q = diagm([wx; wx][:]);
 	end
 	
 	pflow = Collocation_points(xi, wx)

@@ -26,6 +26,7 @@ export set_constraint!,
 	   constraint_elimination,
 	   coupled_gyrator,
 	   discrete_phs,
+	   discrete_phs_closed,
 	   discrete_phs2,
 	   discrete_phs2_distports
 
@@ -41,6 +42,7 @@ include("lgwt.jl")
 include("derivative.jl")
 include("massmatrix.jl")
 include("phdiscretization.jl")
+include("phdiscretization_closed.jl")
 include("eigenphs.jl")
 include("constraint_elimination.jl")
 include("spectral_element_phs.jl")

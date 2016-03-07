@@ -12,6 +12,17 @@ function massij(xi,zi,i,j,wi, int_polynomial)
 	return int_polynomial(xi[j],zi,i)*wi[j]
 end
 
+function massij(xi,zi,i,j,xquad, wquad, int_polynomial)
+	# case where the collocation points are not Gauss-Legendre
+	# an auxiliary set of quadrature points need to be evaluated
+	# to compute the integral!
+	mij = 0.;
+	for k = 1:length(xquad)
+		mij += int_polynomial(xquad[k],xi,j)*int_polynomial(xquad[k],zi,i)*wquad[k]
+	end
+	return mij
+end
+
 function massmatrix(N :: Integer ,a :: Number,b :: Number, order = 1)
 	xi,wi = lgwt(N+order,a,b)
 	if N > 1
@@ -32,6 +43,16 @@ function massmatrix(xi :: Array, zi :: Array, wi :: Array, int_polynomial = leg_
 	for i = 1:length(zi)
 		for j = 1:length(xi)
 			Mass[i:i,j] = massij(xi,zi,i,j,wi, int_polynomial)
+		end
+	end
+	Mass
+end
+
+function massmatrix(xi :: Array, zi :: Array, xquad :: Array, wquad :: Array, int_polynomial = leg_pol)
+	Mass = zeros(length(zi),length(xi));
+	for i = 1:length(zi)
+		for j = 1:length(xi)
+			Mass[i:i,j] = massij(xi,zi,i,j,xquad, wquad, int_polynomial)
 		end
 	end
 	Mass

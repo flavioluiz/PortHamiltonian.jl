@@ -29,7 +29,7 @@ using PortHamiltonian
 #using PyPlot
 
 
-N = 10;
+N = 30;
 a = 0.;
 b = 1.;
 
@@ -56,12 +56,12 @@ print_table(comp_table)
 
 # constrained version
 ph_constrained = deepcopy(ph);
-set_constraint!(ph_constrained, ph_constrained.B, ph_constrained.D);
+set_constraint!(ph_constrained, ph_constrained.B[:,1], ph_constrained.D[1:1,1:1]);
 
 ## eigenvalues of the constrained
 eigval, eigvec = eig(ph_constrained)
 num_freq = frequencies(eigval)
-exact_freq = pi/2*[1:2:2*N];
+exact_freq = pi*[-0:1:N-1];
 err = exact_freq - num_freq;
 
 # comparison between numerical and exact results:
