@@ -22,6 +22,7 @@ import Base: show, eig, blkdiag
 # exports #
 ###########
 export set_constraint!,
+	   removeport!,
 	   frequencies,
 	   constraint_elimination,
 	   coupled_gyrator,
@@ -38,6 +39,17 @@ function blkdiag(x :: Array, y :: Array)
 end
 
 include("types.jl")
+function blkdiag(x :: Phs, y :: Phs)
+	warn("only linear phs with constraint can be concatenated yet")
+	return Phs(blkdiag(x.J,y.J),blkdiag(x.B,y.B),blkdiag(x.D,y.D), blkdiag(x.Q,y.Q))
+end
+
+function removeport!(p :: Phs, portnumber :: Integer)
+	keep = 1:size(p.B,2) .!= portnumber
+	p.B = p.B[:,keep]
+	p.D = p.D[keep,keep]
+	return p
+end
 include("lgwt.jl")
 include("derivative.jl")
 include("massmatrix.jl")
