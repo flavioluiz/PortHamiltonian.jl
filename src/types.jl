@@ -37,6 +37,7 @@ type Phs
 	TransfMatrix :: Array # transformation matrix after reduction change of variables
 							# always start as identity
 	StatesNames :: Dict
+	auxvars :: Dict # auxiliary variables dictionary
 	
 	function Phs(J :: Array, B :: Array, D :: Array, Ham :: Function)
 		this = new()
@@ -46,6 +47,7 @@ type Phs
 		this.Hamiltonian = Ham
 		this.TransfMatrix = eye(size(J,1))
 		this.StatesNames = Dict()
+		this.auxvars = Dict()
 		this
 	end
 	function Phs(J :: Array, B :: Array, D :: Array, Q)
@@ -58,6 +60,7 @@ type Phs
 		this.hessian = x->Q
 		this.TransfMatrix = eye(size(J,1))
 		this.StatesNames = Dict()
+		this.auxvars = Dict()
 		this
 	end
 end
