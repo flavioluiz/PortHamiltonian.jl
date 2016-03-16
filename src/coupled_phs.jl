@@ -30,7 +30,17 @@ function coupled_gyrator(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
 	Dnew[1:length(inputs1), length(inputs1)+1:end] = ph1.D[inputs1,ports1]*couple_matrix*ph2.D[ports2, inputs2];
 	Dnew[length(inputs1)+1:end, 1:length(inputs1)] = - ph2.D[inputs2, ports2]*couple_matrix*ph1.D[ports1,inputs1];
 	Qnew = blkdiag(full(ph1.Q), full(ph2.Q));
-	return Phs(Jnew, Bnew, Dnew, Qnew)
+	phsnew = Phs(Jnew, Bnew, Dnew, Qnew)
+	phsnew.TransfMatrix = blkdiag(ph1.TransfMatrix,ph2.TransfMatrix)
+	
+	# preserves the names of the states:
+	N1 = size(ph1.TransfMatrix,1)
+	for key in keys(ph2.StatesNames)
+		ph2.StatesNames[key] += N1
+	end
+	phsnew.StatesNames = merge(ph1.StatesNames, ph2.StatesNames)
+	
+	return phsnew
 end
 
 function coupled_transformer(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
@@ -68,5 +78,13 @@ function coupled_transformer(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matr
 	Qnew = blkdiag(full(ph1.Q), full(ph2.Q));
 	phnew = Phs(Jnew, Bnew, Dnew, Qnew)
 	set_constraint!(phnew, G, GD)
+	phnew.TransfMatrix = blkdiag(ph1.TransfMatrix,ph2.TransfMatrix)
+	
+	# preserves the names of the states:
+	N1 = size(ph1.TransfMatrix,1)
+	for key in keys(ph2.StatesNames)
+		ph2.StatesNames[key] += N1
+	end
+	phnew.StatesNames = merge(ph1.StatesNames, ph2.StatesNames)
 	return phnew
 end

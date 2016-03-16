@@ -10,6 +10,8 @@ function constraint_elimination(p :: Phs)
 	#                  z1dot = Jnew Qnew z1 + Bnew u
 	#                  y = Bnew' Qnew z1 + D u
 	# 
+	# the change of variables is given by: X = M z
+	#
 	if isdefined(p,:Q)
 		if (p.G_D .< eps()) == trues(size(p.G_D))
 			nstates = size(p.Q,1)
@@ -25,7 +27,12 @@ function constraint_elimination(p :: Phs)
 			Q21 = Qtilde[(end-nconst+1):end,1:nstates-nconst]
 			Q22 = Qtilde[(end-nconst+1):end,(end-nconst+1):end]
 			Qn = Q11-Q12*inv(Q22)*Q21
-			return Phs(J11, Gnull * p.B, p.D, Qn)
+			
+			TransfMatrix = Minv*[eye(nstates-nconst);-inv(Q22)*Q21]
+			newphs = Phs(J11, Gnull * p.B, p.D, Qn)
+			newphs.TransfMatrix = p.TransfMatrix*TransfMatrix
+			newphs.StatesNames = p.StatesNames
+			return newphs
 		elseif (det(p.G_D) > 1e8*eps(norm(p.J)))  # G_D is invertible
 		## Constrained systems with non-zero, invertible, direct link
 			# Given a constrained Phs with N state variables

@@ -41,7 +41,15 @@ end
 include("types.jl")
 function blkdiag(x :: Phs, y :: Phs)
 	warn("only linear phs with constraint can be concatenated yet")
-	return Phs(blkdiag(x.J,y.J),blkdiag(x.B,y.B),blkdiag(x.D,y.D), blkdiag(x.Q,y.Q))
+	phnew = Phs(blkdiag(x.J,y.J),blkdiag(x.B,y.B),blkdiag(x.D,y.D), blkdiag(x.Q,y.Q))
+	phnew.TransfMatrix = blkdiag(x.TransfMatrix,x.TransfMatrix)
+	
+	Nx = size(x.TransfMatrix,1)
+	for key in keys(y.StatesNames)
+		y.StatesNames[key] += Nx
+	end
+	phnew.StatesNames = merge(x.StatesNames, y.StatesNames)
+	return phnew
 end
 
 function removeport!(p :: Phs, portnumber :: Integer)

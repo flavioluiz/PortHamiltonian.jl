@@ -34,6 +34,9 @@ type Phs
 	GradHam :: Function; # Hamiltonian gradient
 	hessian :: Function # Hamiltonian hessian
 	disc_data ::  Discrete_domain # discretization data
+	TransfMatrix :: Array # transformation matrix after reduction change of variables
+							# always start as identity
+	StatesNames :: Dict
 	
 	function Phs(J :: Array, B :: Array, D :: Array, Ham :: Function)
 		this = new()
@@ -41,6 +44,8 @@ type Phs
 		this.B = B
 		this.D = D
 		this.Hamiltonian = Ham
+		this.TransfMatrix = eye(size(J,1))
+		this.StatesNames = Dict()
 		this
 	end
 	function Phs(J :: Array, B :: Array, D :: Array, Q)
@@ -51,6 +56,8 @@ type Phs
 		GHam(x :: Array) = Q*x
 		this.GradHam = GHam
 		this.hessian = x->Q
+		this.TransfMatrix = eye(size(J,1))
+		this.StatesNames = Dict()
 		this
 	end
 end
