@@ -19,16 +19,18 @@ function constraint_elimination(p :: Phs)
 			Gnull = nullspace(p.G')'
 			M = [Gnull; inv((p.G'*p.G)[1])*p.G']
 			Jtilde = M*p.J*M'
-			Minv = inv(M)
-			Qtilde = Minv'*p.Q*Minv
+			#Minv = inv(M)
+			#Qtilde = Minv'*p.Q*Minv
+			Qtilde = M' \ (p.Q / M)
 			J11 = Jtilde[1:nstates-nconst,1:nstates-nconst]
 			Q11 = Qtilde[1:nstates-nconst,1:nstates-nconst]
 			Q12 = Qtilde[1:nstates-nconst,(end-nconst+1):end]
 			Q21 = Qtilde[(end-nconst+1):end,1:nstates-nconst]
 			Q22 = Qtilde[(end-nconst+1):end,(end-nconst+1):end]
-			Qn = Q11-Q12*inv(Q22)*Q21
+			#Qn = Q11-Q12* inv(Q22)*Q21
+			Qn = Q11-Q12* (Q22\Q21)
 			
-			TransfMatrix = Minv*[eye(nstates-nconst);-inv(Q22)*Q21]
+			TransfMatrix = M \ [eye(nstates-nconst);-(Q22\Q21)]
 			newphs = Phs(J11, Gnull * p.B, p.D, Qn)
 			newphs.TransfMatrix = p.TransfMatrix*TransfMatrix
 			newphs.StatesNames = p.StatesNames
@@ -50,8 +52,8 @@ function constraint_elimination(p :: Phs)
 			Gnull = nullspace(p.G')';
 			M = [Gnull; inv((p.G'*p.G)[1])*p.G'];
 			Jtilde = M*p.J*M';
-			Minv = inv(M);
-			Qtilde = Minv'*p.Q*Minv;
+			#Minv = inv(M);
+			Qtilde = M'\ p.Q /M;
 			JD = zeros(size(p.J));
 			JD[(end-nconst+1):end,(end-nconst+1):end] = inv(p.G_D);
 			return Phs(Jtilde-JD, M*p.B, p.D, Qtilde)
