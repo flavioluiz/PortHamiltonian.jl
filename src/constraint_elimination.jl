@@ -34,6 +34,12 @@ function constraint_elimination(p :: Phs)
 			newphs = Phs(J11, Gnull * p.B, p.D, Qn)
 			newphs.TransfMatrix = p.TransfMatrix*TransfMatrix
 			newphs.StatesNames = p.StatesNames
+			
+			# damping matrix:
+			Rtilde = M*p.R*M'
+			Rtilde11 = Rtilde[1:nstates-nconst,1:nstates-nconst]
+			newphs.R = Rtilde11
+			
 			return newphs
 		elseif (det(p.G_D) > 1e8*eps(norm(p.J)))  # G_D is invertible
 		## Constrained systems with non-zero, invertible, direct link

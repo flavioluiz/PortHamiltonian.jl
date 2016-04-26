@@ -43,7 +43,7 @@ function blkdiag(x :: Phs, y :: Phs)
 	warn("only linear phs with constraint can be concatenated yet")
 	phnew = Phs(blkdiag(x.J,y.J),blkdiag(x.B,y.B),blkdiag(x.D,y.D), blkdiag(x.Q,y.Q))
 	phnew.TransfMatrix = blkdiag(x.TransfMatrix,y.TransfMatrix)
-	
+	phnew.R = blkdiag(x.R,y.R)	
 	Nx = size(x.TransfMatrix,1)
 	for key in keys(y.StatesNames)
 		y.StatesNames[key] += Nx

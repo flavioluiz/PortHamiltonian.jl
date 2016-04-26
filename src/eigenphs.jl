@@ -47,6 +47,40 @@ function eig(p :: Phs)
 	end
 end
 
+function eigdamp(p :: Phs)
+	# computes the frequency and damping of PHS with damping
+	#  (which haves a Q matrix!)
+	#
+	#	constrained (G != 0) cases can be addressed using
+	#  generalized eigenvalues
+	#
+
+	if isdefined(p, :Q)
+		if isdefined(p,:G)
+			nconst = size(p.G,2)
+			I = eye(size(p.J,1))
+			z = zeros(nconst,nconst)
+			E = blkdiag(I,z)
+			A = [(p.J-p.R)*p.Q p.G;
+			     p.G'*p.Q p.G_D]
+			e = eigfact(A,E)
+			ind = sortperm(imag(e.values))
+			return e.values[ind], e.vectors[ind,ind]
+		else
+			a,v = eig((p.J-p.R)*p.Q)
+			ind = sortperm(imag(a))
+			return a[ind], v[:,ind]
+		end
+	else
+		fprintln("Undefined Q matrix (nonlinear system?)!")
+		return
+	end
+end
+
+function damp(p :: Phs)
+	a,v = eigdamp(p)
+	return [abs(a) -cos(angle(a))]
+end
 function frequencies(a :: Array)
 		imag(a[imag(a).>=0])
 end

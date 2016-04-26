@@ -44,6 +44,7 @@ type Phs
 		this.J = J
 		this.B = B
 		this.D = D
+		this.R = zeros(size(J))
 		this.Hamiltonian = Ham
 		this.TransfMatrix = eye(size(J,1))
 		this.StatesNames = Dict()
@@ -53,6 +54,7 @@ type Phs
 	function Phs(J :: Array, B :: Array, D :: Array, Q)
 		this = new()
 		this.J = J;	this.B = B;	this.D = D;	this.Q = Q;
+		this.R = zeros(size(J))
 		Ham(x :: Array) = (0.5* x'*Q*x)[1]
 		this.Hamiltonian = Ham
 		GHam(x :: Array) = Q*x
