@@ -39,7 +39,7 @@ function coupled_gyrator(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
 		ph2.StatesNames[key] += N1
 	end
 	phsnew.StatesNames = merge(ph1.StatesNames, ph2.StatesNames)
-	phnew.R = blkdiag(ph1.R, ph2.R)	
+	phsnew.R = blkdiag(ph1.R, ph2.R)	
 	return phsnew
 end
 

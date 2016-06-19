@@ -29,7 +29,8 @@ export set_constraint!,
 	   discrete_phs,
 	   discrete_phs_closed,
 	   discrete_phs2,
-	   discrete_phs2_distports
+	   discrete_phs2_distports,
+	   finelem
 
 function blkdiag(x :: Array, y :: Array)
 	res = zeros(size(x,1)+size(y,1),size(x,2)+size(y,2));
@@ -59,6 +60,7 @@ function removeport!(p :: Phs, portnumber :: Integer)
 	return p
 end
 include("lgwt.jl")
+include("lglnodes.jl")
 include("derivative.jl")
 include("massmatrix.jl")
 include("phdiscretization.jl")
@@ -67,6 +69,7 @@ include("eigenphs.jl")
 include("constraint_elimination.jl")
 include("spectral_element_phs.jl")
 include("coupled_phs.jl")
+include("weakdiscretization.jl")
 
 function leg_pol(x :: Array,xi :: Array,j :: Integer)
 	leg_pol(x[1],xi,j)
