@@ -27,6 +27,8 @@ function coupled_gyrator(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
 	Jnew[(N1+1):end, 1:(N1)] = -ph2.B[:,ports2]*couple_matrix*(ph1.B[:,ports1].')
 	
 	Dnew = zeros(length(inputs1)+length(inputs2),length(inputs1)+length(inputs2));
+	Dnew[1:length(inputs1), 1:length(inputs1)] = ph1.D[inputs1,inputs1]
+	Dnew[length(inputs1)+1:end, length(inputs1)+1:end] = ph2.D[inputs2,inputs2]
 	Dnew[1:length(inputs1), length(inputs1)+1:end] = ph1.D[inputs1,ports1]*couple_matrix*ph2.D[ports2, inputs2];
 	Dnew[length(inputs1)+1:end, 1:length(inputs1)] = - ph2.D[inputs2, ports2]*couple_matrix*ph1.D[ports1,inputs1];
 	Qnew = blkdiag(full(ph1.Q), full(ph2.Q));
@@ -39,6 +41,14 @@ function coupled_gyrator(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
 		ph2.StatesNames[key] += N1
 	end
 	phsnew.StatesNames = merge(ph1.StatesNames, ph2.StatesNames)
+	
+	# remove the names of the coupled inputs
+	inp1 = copy(ph1.InputsNames)
+	deleteat!(inp1, ports1);
+	inp2 = copy(ph2.InputsNames)
+	deleteat!(inp2, ports2);	
+	phsnew.InputsNames = [inp1, inp2]
+	
 	phsnew.R = blkdiag(ph1.R, ph2.R)	
 	return phsnew
 end

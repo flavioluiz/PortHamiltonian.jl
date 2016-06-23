@@ -37,6 +37,7 @@ type Phs
 	TransfMatrix :: Array # transformation matrix after reduction change of variables
 							# always start as identity
 	StatesNames :: Dict
+	InputsNames :: Array
 	auxvars :: Dict # auxiliary variables dictionary
 	
 	function Phs(J :: Array, B :: Array, D :: Array, Ham :: Function)
@@ -49,6 +50,7 @@ type Phs
 		this.TransfMatrix = eye(size(J,1))
 		this.StatesNames = Dict()
 		this.auxvars = Dict()
+		this.InputsNames = repmat([""],size(B,2))
 		this
 	end
 	function Phs(J :: Array, B :: Array, D :: Array, Q)
@@ -63,6 +65,7 @@ type Phs
 		this.TransfMatrix = eye(size(J,1))
 		this.StatesNames = Dict()
 		this.auxvars = Dict()
+		this.InputsNames = repmat([""],size(B,2))
 		this
 	end
 end
