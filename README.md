@@ -4,4 +4,16 @@
 
 # PortHamiltonian
 
+## How to install
+
+```julia
+julia> Pkg.clone("git://github.com/flavioluiz/PortHamiltonian.jl")
+```
+
+## How to use
+
+```julia
+julia> using PortHamiltonian
+```
+
 
