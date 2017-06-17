@@ -7,6 +7,13 @@
 # * automatic subdivide in elements?
 __precompile__()
 
+"""
+	PortHamiltonian
+
+	This module has several tools for discretization of infinite-dimensional systems
+	and manipulation of finite-dimensional port-Hamiltonian systems.
+
+"""
 module PortHamiltonian
 
 using ForwardDiff
@@ -32,6 +39,11 @@ export set_constraint!,
 	   discrete_phs2_distports,
 	   finelem
 
+"""
+    blkdiag(x :: Array, y :: Array)	
+
+    creates a block-diagonal matrix from two arrays x and y
+"""
 function blkdiag(x :: Array, y :: Array)
 	res = zeros(size(x,1)+size(y,1),size(x,2)+size(y,2));
 	res[1:size(x,1), 1:size(x,2)] = x;
@@ -40,6 +52,11 @@ function blkdiag(x :: Array, y :: Array)
 end
 
 include("types.jl")
+"""
+	blkdiag(x :: Phs, y :: Phs)
+
+	concatenate two phs objects
+"""
 function blkdiag(x :: Phs, y :: Phs)
 	warn("only linear phs with constraint can be concatenated yet")
 	phnew = Phs(blkdiag(x.J,y.J),blkdiag(x.B,y.B),blkdiag(x.D,y.D), blkdiag(x.Q,y.Q))
@@ -54,6 +71,11 @@ function blkdiag(x :: Phs, y :: Phs)
 	return phnew
 end
 
+"""
+	removeport!(p :: Phs, portnumber :: Integer)
+
+	remover input/output port of Phs p
+"""
 function removeport!(p :: Phs, portnumber :: Integer)
 	keep = 1:size(p.B,2) .!= portnumber
 	p.B = p.B[:,keep]
@@ -75,9 +97,14 @@ include("weakdiscretization.jl")
 function leg_pol(x :: Array,xi :: Array,j :: Integer)
 	leg_pol(x[1],xi,j)
 end
+""" 
+	leg_pol(x :: Number,xi :: Array,j :: Integer)
+
+	evaluate the "j" Lagrange polynomial defined using
+	the collocation points "xi" at point "x"
+"""
 function leg_pol(x :: Number,xi :: Array,j :: Integer)
-	# evaluate the "j" Lagrange polynomial defined using
-    # the collocation points "xi" at point "x"
+
 	P = 1.;
         for k = 1:length(xi)
 	        if (k != j)

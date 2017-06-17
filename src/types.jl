@@ -1,5 +1,10 @@
 
+"""
+    Collocation_points
 
+	Type with vector of collocation points xi and respective quadrature
+	integration weights wi.
+"""
 type Collocation_points
 	xi         #  collocation points
 	wi         #  quadrature integration weights
@@ -10,6 +15,12 @@ function show(io ::IO, object :: Collocation_points)
 	println(io, ".xi"); println(io, ".wi")
 end
 
+
+"""
+    Discrete_domain
+
+	Define the flow and effort collocation points.
+"""
 type Discrete_domain
 	flow     :: Collocation_points # zi
 	effort   :: Collocation_points # xi
@@ -20,7 +31,13 @@ function show(io ::IO, object :: Discrete_domain)
 	println(io, "...", length(object.effort.xi), " collocation points for the effort variables")
 	println(io, ".flow"); println(io, ".effort")
 end
+"""
+    Phs
 
+	Port-Hamiltonian object. Describe the interconnection matrices,
+	Hamiltonian, constraints, etc.
+
+"""
 type Phs
 	J :: Array; # interconnection matrix
 	B :: Array; # control/output matrix
@@ -40,6 +57,10 @@ type Phs
 	InputsNames :: Array
 	auxvars :: Dict # auxiliary variables dictionary
 	
+	"""
+	    Phs object constructor: interconnection matrices and Hamiltonian
+		                        function as inputs.
+	"""
 	function Phs(J :: Array, B :: Array, D :: Array, Ham :: Function)
 		this = new()
 		this.J = J
@@ -53,6 +74,7 @@ type Phs
 		this.InputsNames = repmat([""],size(B,2))
 		this
 	end
+	"The Hamiltonian matrix Q can be used instead of the Hamiltonian function"
 	function Phs(J :: Array, B :: Array, D :: Array, Q)
 		this = new()
 		this.J = J;	this.B = B;	this.D = D;	this.Q = Q;
@@ -69,6 +91,14 @@ type Phs
 		this
 	end
 end
+
+"""
+    set_constraint!(ph :: Phs, G, G_D)
+
+	Set a constraint G to the Phs. If a constraint already exists, it is
+	overwritten. The feedthrough matrix G_D is optional.
+
+"""
 function set_constraint!(ph :: Phs, G, G_D)
 	if isdefined(ph, :G) warn("Constraint was already defined! overwriting!"); end
 	ph.G = G
