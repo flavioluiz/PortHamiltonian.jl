@@ -82,7 +82,7 @@ function coupled_transformer(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matr
 	#Dnew = zeros(length(inputs1)+length(inputs2),length(inputs1)+length(inputs2));
 	#Dnew[1:length(inputs1), length(inputs1)+1:end] = ph1.D[inputs1,ports1]*couple_matrix*ph2.D[ports2, inputs2];
 	#Dnew[length(inputs1)+1:end, 1:length(inputs1)] = - ph2.D[inputs2, ports2]*couple_matrix*ph1.D[ports1,inputs1];
-	G = [ph1.B[:,ports1],ph2.B[:,ports2]*couple_matrix]
+	G = [ph1.B[:,ports1] ; ph2.B[:,ports2]*couple_matrix]
 	GD = ph1.D[ports1,ports1] - ph2.D[ports2,ports2]*couple_matrix
 	Dnew = blkdiag(ph1.D[inputs1,inputs1], ph2.D[inputs2,inputs2])
 	Qnew = blkdiag(full(ph1.Q), full(ph2.Q));
