@@ -22,7 +22,7 @@ function dermatrix(xi :: Array,zi :: Array, order = 1)
 	for j = 1:length(xi)
 		g = algo_diff(x-> leg_pol(x,xi[:],j), order)
 		for i = 1:length(zi)		
-			D[i,j] = g(zi[i])
+			D[i,j] = g(zi[i])[1]
 		end
 	end
 	D
@@ -33,8 +33,7 @@ function algo_diff(func :: Function, order :: Integer)
 		g = x-> ForwardDiff.derivative(func,x)
 		return g
 	elseif order == 2
-		g = x->ForwardDiff.hessian(func,x)
-		g(x) = g([x])
+		g = x->ForwardDiff.hessian(func,[x])
 		return g
 		else
 			println("no more than 2nd order derivative yet")
