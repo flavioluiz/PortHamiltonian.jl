@@ -20,6 +20,7 @@ function massij(xi,zi,i,j,xquad, wquad, int_polynomial)
 	for k = 1:length(xquad)
 		mij += int_polynomial(xquad[k],xi,j)*int_polynomial(xquad[k],zi,i)*wquad[k]
 	end
+	prinln(mij, " ", i," " , j)
 	return mij
 end
 
@@ -42,7 +43,8 @@ function massmatrix(xi :: Array, zi :: Array, wi :: Array, int_polynomial = leg_
 	Mass = zeros(length(zi),length(xi));
 	for i = 1:length(zi)
 		for j = 1:length(xi)
-			Mass[i:i,j] = massij(xi,zi,i,j,wi, int_polynomial)
+			mij = massij(xi,zi,i,j,wi, int_polynomial)
+			Mass[i,j] = mij
 		end
 	end
 	Mass
@@ -52,7 +54,9 @@ function massmatrix(xi :: Array, zi :: Array, xquad :: Array, wquad :: Array, in
 	Mass = zeros(length(zi),length(xi));
 	for i = 1:length(zi)
 		for j = 1:length(xi)
-			Mass[i:i,j] = massij(xi,zi,i,j,xquad, wquad, int_polynomial)
+			mij = massij(xi,zi,i,j,xquad, wquad, int_polynomial)
+			prinln(mij)
+			Mass[i,j] = mij
 		end
 	end
 	Mass

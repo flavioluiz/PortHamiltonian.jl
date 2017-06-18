@@ -12,7 +12,7 @@ function weak_phs1(N,a,b)
 	#xquad, wquad = lgwt(Ne,a,b)\
 	#M = massmatrix(ei,xi, xquad, wquad);
 	M1 = massmatrix(x1,x1, w1);
-	M2 = massmatrix([x2],[x2], [w2]);
+	M2 = massmatrix(x2,x2, w2);
 	
 	D = dermatrix(x1,x2,1)'*M2 ;
 	p0 = map(i->leg_pol(a,x1,i), 1:length(x1))
@@ -50,7 +50,7 @@ function weak_phs2(N,a,b)
 	#M = massmatrix(ei,xi,we);
 	#xquad, wquad = lgwt(Ne,a,b)\
 	#M = massmatrix(ei,xi, xquad, wquad);
-	M1 = massmatrix([x1],[x1], [w1]);
+	M1 = massmatrix(x1,x1, w1);
 	M2 = massmatrix(x2,x2, w2);
 	
 	D = dermatrix(x2,x1,1)'*M1 ;
@@ -80,7 +80,6 @@ end
 #coupled_gyrator(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
 function finelem(Nelem,Nint,a,b)
 	dx = (b-a)/Nelem;
-	
 	p = weak_phs1(Nint,0,dx)
 	for i = 2:Nelem
 		if (i%2 == 1)

@@ -21,7 +21,7 @@ function lglnodes(N,a,b)
 	N1=N+1;
 
 	#% Use the Chebyshev-Gauss-Lobatto nodes as the first guess
-	x=cos(pi*[0:N]/N);
+	x=cos(pi*collect(0:N)/N);
 
 	# The Legendre Vandermonde Matrix
 	P=zeros(N1,N1);
