@@ -1,4 +1,60 @@
+
+function weak_phs_FEM(Ne,Norder,a,b)
+# this function uses the partioned FEM method, finding a single PHS model
+# for the whole (1D) domain.
+# TO DO: - correct the input matrix, and allow for higher-order polynomials
+	N1 = Norder+1   # variables x1, e1 and v1
+	N2 = Norder   	#    variables x2, e2 and v2
+	
+	x1,w1,P = lglnodes(N1-1,0,(b-a)/Ne)    # discretization of x1 variables
+	x1i,w1i,Pi = lglnodes(N1,0,(b-a)/Ne)
+	if N2 > 1
+		x2,w2 = lgwt(N2,0,(b-a)/Ne)
+	else
+		x2,w2 = [(a+b)/2], [(b-a)/Ne];
+	end
+	#M = massmatrix(ei,xi,we);
+	#xquad, wquad = lgwt(Ne,a,b)\
+	#M = massmatrix(ei,xi, xquad, wquad);
+	M1 = massmatrix(x1,x1, x1i,w1i);
+	M2 = massmatrix(x2,x2, w2);
+	
+	D = dermatrix(x1,x2,1)'*M2 ;
+	p0 = map(i->leg_pol(a,x1,i), 1:length(x1))
+	pL = map(i->leg_pol(b,x1,i), 1:length(x1))
+	B = [p0, pL]
+
+	M1full = zeros(Ne+1,Ne+1);
+	M2full = zeros(Ne,Ne);
+	Dfull = zeros(Ne+1,Ne);
+
+	for i = 1:Ne
+		M1full[(i):(i+1),(i):(i+1)] = M1full[(i):(i+1),(i):(i+1)] + M1;
+		M2full[i:i,i] = M2;
+		Dfull[i:(i+1),i] = D;
+	end
+
+	# interconnection matrix J:
+	phJ = [zeros(Ne+1,Ne+1) Dfull;
+	    -Dfull' zeros(Ne,Ne)];
+	phD = zeros(2,2)
+	# Hamiltonian matrix Q:
+	Q = blkdiag(inv(M1full), inv(M2full));
+
+
+	# input matrix
+	phB = [p0 -pL; zeros(N2,2)];
+
+
+	p = Phs(phJ, phB, phD, Q)
+
+	p
+end
+
 function weak_phs1(N,a,b)
+# this function uses the partioned FEM method, finding a PHS model for a
+# part of the domain. This could be used with higher order polynomials
+# (using a single element), or coupling several elements (using lower-order polynomials)
 	N1 = N+1   # variables x1, e1 and v1
 	N2 = N   	#    variables x2, e2 and v2
 	
@@ -76,6 +132,9 @@ function weak_phs2(N,a,b)
 	#p.GradHam = ForwardDiff.gradient(p.Hamiltonian)
 	p
 end
+
+
+
 
 #coupled_gyrator(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
 function finelem(Nelem,Nint,a,b)
