@@ -7,7 +7,7 @@ function weak_phs_FEM(Ne,Norder,a,b)
 	N2 = Norder   	#    variables x2, e2 and v2
 	
 	x1,w1,P = lglnodes(N1-1,0,(b-a)/Ne)    # discretization of x1 variables
-	x1i,w1i,Pi = lglnodes(N1,0,(b-a)/Ne)
+	x1i,w1i,Pi = lglnodes(N1,0,(b-a)/Ne)  # these points are used to integrate the mass matrix using quadrature
 	if N2 > 1
 		x2,w2 = lgwt(N2,0,(b-a)/Ne)
 	else
@@ -20,18 +20,25 @@ function weak_phs_FEM(Ne,Norder,a,b)
 	M2 = massmatrix(x2,x2, w2);
 	
 	D = dermatrix(x1,x2,1)'*M2 ;
-	p0 = map(i->leg_pol(a,x1,i), 1:length(x1))
-	pL = map(i->leg_pol(b,x1,i), 1:length(x1))
-	B = [p0, pL]
+	p0 = map(i->leg_pol(0,x1,i), 1:length(x1))
+	pL = map(i->leg_pol((b-a)/Ne,x1,i), 1:length(x1))
+	B = [p0 pL]
 
 	M1full = zeros(Ne+1,Ne+1);
 	M2full = zeros(Ne,Ne);
 	Dfull = zeros(Ne+1,Ne);
+	Bfull = zeros(Ne+1,2);
 
 	for i = 1:Ne
 		M1full[(i):(i+1),(i):(i+1)] = M1full[(i):(i+1),(i):(i+1)] + M1;
 		M2full[i:i,i] = M2;
 		Dfull[i:(i+1),i] = D;
+		if i == 1
+			Bfull[i:(i+1),1] = Bfull[i:(i+1),1]+B[1:2,1];
+		end
+		if i == Ne
+			Bfull[i:(i+1),2] = Bfull[i:(i+1),2]+B[1:2,2];
+		end
 	end
 
 	# interconnection matrix J:
@@ -43,7 +50,7 @@ function weak_phs_FEM(Ne,Norder,a,b)
 
 
 	# input matrix
-	phB = [p0 -pL; zeros(N2,2)];
+	phB = [Bfull; zeros(Ne,2)];
 
 
 	p = Phs(phJ, phB, phD, Q)
