@@ -9,7 +9,7 @@ function weak_phs_FEM(Ne,Norder,a,b)
 	x1,w1,P = lglnodes(N1-1,0,(b-a)/Ne)    # discretization of x1 variables
 	x1i,w1i,Pi = lglnodes(N1,0,(b-a)/Ne)  # these points are used to integrate the mass matrix using quadrature
 	if N2 > 1
-		x2,w2 = lgwt(N2,0,(b-a)/Ne)
+		x2,w2 = lglnodes(N2-1,0,(b-a)/Ne)
 	else
 		x2,w2 = [(a+b)/2], [(b-a)/Ne];
 	end
@@ -17,33 +17,60 @@ function weak_phs_FEM(Ne,Norder,a,b)
 	#xquad, wquad = lgwt(Ne,a,b)\
 	#M = massmatrix(ei,xi, xquad, wquad);
 	M1 = massmatrix(x1,x1, x1i,w1i);
-	M2 = massmatrix(x2,x2, w2);
+	if Norder == 1
+		M2 = massmatrix(x2,x2, w2);
+	else
+		x2i,w2i,P2i = lglnodes(N2,0,(b-a)/Ne)  # these points are used to integrate the mass matrix using quadrature
+		M2 = massmatrix(x2,x2, x2i,w2i);
+	end
 	
 	D = dermatrix(x1,x2,1)'*M2 ;
+	
 	p0 = map(i->leg_pol(0,x1,i), 1:length(x1))
 	pL = map(i->leg_pol((b-a)/Ne,x1,i), 1:length(x1))
 	B = [p0 pL]
 
-	M1full = zeros(Ne+1,Ne+1);
-	M2full = zeros(Ne,Ne);
-	Dfull = zeros(Ne+1,Ne);
-	Bfull = zeros(Ne+1,2);
+	M1full = zeros(Ne*Norder+1,Ne*Norder+1);
+	if Norder == 1
+		M2full = zeros(Ne,Ne);
+	else
+		M2full = zeros((Ne)*(Norder-1)+1,(Ne)*(Norder-1)+1);
+	end
+	if Norder == 1
+		Dfull = zeros(Ne*Norder+1,Ne);
+	else
+		Dfull = zeros(Ne*Norder+1,(Ne)*(Norder-1)+1);
+	end
+	Bfull = zeros(Ne*Norder+1,2);
 
 	for i = 1:Ne
-		M1full[(i):(i+1),(i):(i+1)] = M1full[(i):(i+1),(i):(i+1)] + M1;
-		M2full[i:i,i] = M2;
-		Dfull[i:(i+1),i] = D;
+		M1full[((i-1)*Norder+1):((i)*Norder+1),((i-1)*Norder+1):((i)*Norder+1)] = M1full[((i-1)*Norder+1):((i)*Norder+1),((i-1)*Norder+1):((i)*Norder+1)] + M1;
+		if Norder == 1
+			M2full[i:i,i] = M2;
+		else
+			M2full[((i-1)*(Norder-1)+1):((i)*(Norder-1)+1),((i-1)*(Norder-1)+1):((i)*(Norder-1)+1)] = M2full[((i-1)*(Norder-1)+1):((i)*(Norder-1)+1),((i-1)*(Norder-1)+1):((i)*(Norder-1)+1)] + M2;
+		end
+		if Norder == 1
+			Dfull[((i-1)*Norder+1):((i)*Norder+1),i] = D;
+		else
+			Dfull[((i-1)*Norder+1):((i)*Norder+1),((i-1)*(Norder-1)+1):((i)*(Norder-1)+1)] = D;
+		end
 		if i == 1
-			Bfull[i:(i+1),1] = Bfull[i:(i+1),1]+B[1:2,1];
+			Bfull[((i-1)*Norder+1):((i)*Norder+1),1] =Bfull[((i-1)*Norder+1):((i)*Norder+1),1]+B[:,1];
 		end
 		if i == Ne
-			Bfull[i:(i+1),2] = Bfull[i:(i+1),2]+B[1:2,2];
+			Bfull[((i-1)*Norder+1):((i)*Norder+1),2] =Bfull[((i-1)*Norder+1):((i)*Norder+1),2]+B[:,2];
 		end
 	end
 
 	# interconnection matrix J:
+	if Norder == 1
 	phJ = [zeros(Ne+1,Ne+1) Dfull;
-	    -Dfull' zeros(Ne,Ne)];
+		-Dfull' zeros(Ne,Ne)];
+	else
+		phJ = [zeros(Ne*Norder+1,Ne*Norder+1) Dfull;
+		-Dfull' zeros((Ne)*(Norder-1)+1,(Ne)*(Norder-1)+1)];
+	end
 	phD = zeros(2,2)
 	# Hamiltonian matrix Q:
 	Q = blkdiag(inv(M1full), inv(M2full));
