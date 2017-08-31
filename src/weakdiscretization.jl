@@ -53,7 +53,7 @@ function weak_phs_FEM(Ne,Norder,a,b)
 		if Norder == 1
 			Dfull[((i-1)*Norder+1):((i)*Norder+1),i] = D;
 		else
-			Dfull[((i-1)*Norder+1):((i)*Norder+1),((i-1)*(Norder-1)+1):((i)*(Norder-1)+1)] = D;
+			Dfull[((i-1)*Norder+1):((i)*Norder+1),((i-1)*(Norder-1)+1):((i)*(Norder-1)+1)] = Dfull[((i-1)*Norder+1):((i)*Norder+1),((i-1)*(Norder-1)+1):((i)*(Norder-1)+1)]+D;
 		end
 		if i == 1
 			Bfull[((i-1)*Norder+1):((i)*Norder+1),1] =Bfull[((i-1)*Norder+1):((i)*Norder+1),1]+B[:,1];
