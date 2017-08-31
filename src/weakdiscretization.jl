@@ -6,10 +6,10 @@ function weak_phs_FEM(Ne,Norder,a,b)
 	N1 = Norder+1   # variables x1, e1 and v1
 	N2 = Norder   	#    variables x2, e2 and v2
 	
-	x1,w1,P = lglnodes(N1-1,0,(b-a)/Ne)    # discretization of x1 variables
+	x1,w1,P = lglnodes(N1-1,(b-a)/Ne,0)    # discretization of x1 variables
 	x1i,w1i,Pi = lglnodes(N1,0,(b-a)/Ne)  # these points are used to integrate the mass matrix using quadrature
 	if N2 > 1
-		x2,w2 = lglnodes(N2-1,0,(b-a)/Ne)
+		x2,w2 = lglnodes(N2-1,(b-a)/Ne,0)
 	else
 		x2,w2 = [(a+b)/2], [(b-a)/Ne];
 	end
@@ -29,6 +29,7 @@ function weak_phs_FEM(Ne,Norder,a,b)
 	p0 = map(i->leg_pol(0,x1,i), 1:length(x1))
 	pL = map(i->leg_pol((b-a)/Ne,x1,i), 1:length(x1))
 	B = [p0 pL]
+	display(B)
 
 	M1full = zeros(Ne*Norder+1,Ne*Norder+1);
 	if Norder == 1
@@ -77,7 +78,11 @@ function weak_phs_FEM(Ne,Norder,a,b)
 
 
 	# input matrix
-	phB = [Bfull; zeros(Ne,2)];
+	if Norder == 1
+		phB = [Bfull; zeros(Ne,2)];
+	else
+		phB = [Bfull; zeros((Ne)*(Norder-1)+1,2)];
+	end
 
 
 	p = Phs(phJ, phB, phD, Q)
