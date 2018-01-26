@@ -68,7 +68,7 @@ function blkdiag(x :: Phs, y :: Phs)
 		y.StatesNames[key] += Nx
 	end
 	phnew.StatesNames = merge(x.StatesNames, y.StatesNames)
-	phnew.InputsNames = [x.InputsNames, y.InputsNames]
+	phnew.InputsNames = [x.InputsNames; y.InputsNames]
 	return phnew
 end
 

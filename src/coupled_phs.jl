@@ -47,7 +47,7 @@ function coupled_gyrator(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
 	deleteat!(inp1, ports1);
 	inp2 = copy(ph2.InputsNames)
 	deleteat!(inp2, ports2);	
-	phsnew.InputsNames = [inp1, inp2]
+	phsnew.InputsNames = [inp1; inp2]
 	
 	phsnew.R = blkdiag(ph1.R, ph2.R)	
 	return phsnew
