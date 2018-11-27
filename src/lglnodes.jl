@@ -21,7 +21,7 @@ function lglnodes(N,a,b)
 	N1=N+1;
 
 	#% Use the Chebyshev-Gauss-Lobatto nodes as the first guess
-	x=cos(pi*collect(0:N)/N);
+	x=cos.(pi*collect(0:N)/N);
 
 	# The Legendre Vandermonde Matrix
 	P=zeros(N1,N1);
@@ -32,7 +32,7 @@ function lglnodes(N,a,b)
 
 	xold=2;
 
-	while maximum(abs(x-xold))>eps()
+	while maximum(abs.(x-xold))>eps()
 
 	    xold=x;
         
@@ -46,7 +46,7 @@ function lglnodes(N,a,b)
              
 	end
 
-	w=2./(N*N1*P[:,N1].^2)/2.*(b-a);
-	x = (x+1)*(b-a)/2.+a 
+	w=2.0/(N*N1*P[:,N1].^2)/2.0*(b-a);
+	x = (x+1)*(b-a)/2.0+a 
 	return x,w,P
 end

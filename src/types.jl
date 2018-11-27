@@ -5,7 +5,7 @@
 	Type with vector of collocation points xi and respective quadrature
 	integration weights wi.
 """
-type Collocation_points
+struct Collocation_points
 	xi         #  collocation points
 	wi         #  quadrature integration weights
 end
@@ -21,7 +21,7 @@ end
 
 	Define the flow and effort collocation points.
 """
-type Discrete_domain
+struct Discrete_domain
 	flow     :: Collocation_points # zi
 	effort   :: Collocation_points # xi
 end
@@ -38,7 +38,7 @@ end
 	Hamiltonian, constraints, etc.
 
 """
-type Phs
+struct Phs
 	J :: Array; # interconnection matrix
 	B :: Array; # control/output matrix
 	Bd :: Array; # distributed control matrix (optional)

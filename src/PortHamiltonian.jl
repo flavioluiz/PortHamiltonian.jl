@@ -23,7 +23,9 @@ using ForwardDiff
 # imports # 
 ########### 
 # additional functionality is added to the following Base functions:
-import Base: show, eig, blkdiag
+import LinearAlgebra: eig
+#import SparseArrays: blkdiag
+import Base: show
 
 ###########
 # exports #

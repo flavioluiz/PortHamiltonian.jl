@@ -67,7 +67,7 @@ function new_block_spectral_element_phs(Nel,Npol,a,b)
 end
 
 
-type spectral_element_phs
+struct spectral_element_phs
 	phs::Phs
 	
 	

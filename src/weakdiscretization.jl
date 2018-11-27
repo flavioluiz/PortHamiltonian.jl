@@ -125,7 +125,7 @@ function weak_phs_FEM(Ne,N1, N2,a,b)
 			M2 = massmatrix(x2,x2, x2i,w2i);
 		end
 		
-		D = dermatrix(x1,x2,1)'*M2 ;		
+		D = transpose(dermatrix(x1,x2,1))*M2 ;		
 		
 		p0 = map(i->leg_pol(0,x1,i), 1:length(x1))
 		pL = map(i->leg_pol((b-a)/Ne,x1,i), 1:length(x1))
@@ -167,10 +167,10 @@ function weak_phs_FEM(Ne,N1, N2,a,b)
 		# interconnection matrix J:
 		if N2 == 1
 		phJ = [zeros(Ne*(N1-1)+1,Ne*(N1-1)+1) Dfull;
-			-Dfull' zeros(Ne,Ne)];
+			-transpose(Dfull) zeros(Ne,Ne)];
 		else
 			phJ = [zeros(Ne*(N1-1)+1,Ne*(N1-1)+1) Dfull;
-			-Dfull' zeros((Ne)*(N2-1)+1,(Ne)*(N2-1)+1)];
+			-transpose(Dfull) zeros((Ne)*(N2-1)+1,(Ne)*(N2-1)+1)];
 		end
 		phD = zeros(2,2)
 		# Hamiltonian matrix Q:
@@ -305,13 +305,13 @@ function weak_phs1(N,a,b)
 	M1 = massmatrix(x1,x1, w1);
 	M2 = massmatrix(x2,x2, w2);
 	
-	D = dermatrix(x1,x2,1)'*M2 ;
+	D = transpose(dermatrix(x1,x2,1))*M2 ;
 	p0 = map(i->leg_pol(a,x1,i), 1:length(x1))
 	pL = map(i->leg_pol(b,x1,i), 1:length(x1))
 	
 	
     phJ = [zeros(N1,N1) D;
-	   -D' zeros(N2, N2)];
+	   -transpose(D) zeros(N2, N2)];
     phB = [p0 -pL; zeros(N2,2)];
     phD = zeros(2,2);
 		
@@ -344,12 +344,12 @@ function weak_phs2(N,a,b)
 	M1 = massmatrix(x1,x1, w1);
 	M2 = massmatrix(x2,x2, w2);
 	
-	D = dermatrix(x2,x1,1)'*M1 ;
+	D = transpose(dermatrix(x2,x1,1))*M1 ;
 	p0 = map(i->leg_pol(a,x2,i), 1:length(x2))
 	pL = map(i->leg_pol(b,x2,i), 1:length(x2))
 	
 	
-    phJ = [zeros(N1,N1) -D';
+    phJ = [zeros(N1,N1) -transpose(D);
 	   D zeros(N2, N2)];
     phB = [zeros(N1,2); p0 -pL];
     phD = zeros(2,2);
