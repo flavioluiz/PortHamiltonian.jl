@@ -55,7 +55,7 @@ function constraint_elimination(p :: Phs)
 			#                  y = Bnew' Qnew z + Dnew u
 			nconst = size(p.G,2)
 			println("non-zero, invertible G_D:");
-			Gnull = nullspace(transpose(p.G))';
+			Gnull = transpose(nullspace(copy.(transpose(p.G))));
 			M = [Gnull; inv((transpose(p.G)*p.G)[1])*transpose(p.G)];
 			Jtilde = M*p.J*transpose(M);
 			#Minv = inv(M);
