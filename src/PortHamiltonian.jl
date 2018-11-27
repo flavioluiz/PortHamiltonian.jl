@@ -17,14 +17,14 @@ __precompile__()
 module PortHamiltonian
 
 using ForwardDiff
-
+using LinearAlgebra
 
 ###########
 # imports # 
 ########### 
-# additional functionality is added to the following Base functions:
-import LinearAlgebra: eig
-#import SparseArrays: blkdiag
+# additional functionality is added to the following functions:
+import LinearAlgebra: eig, nullspace
+import SparseArrays: blkdiag
 import Base: show
 
 ###########

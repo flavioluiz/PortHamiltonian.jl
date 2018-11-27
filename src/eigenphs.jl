@@ -79,7 +79,7 @@ end
 
 function damp(p :: Phs)
 	a,v = eigdamp(p)
-	return [abs(a) -cos(angle(a))]
+	return [abs.(a) -cos.(angle.(a))]
 end
 function frequencies(a :: Array)
 		imag(a[imag(a).>=0])

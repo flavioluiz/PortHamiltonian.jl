@@ -46,7 +46,7 @@ function lglnodes(N,a,b)
              
 	end
 
-	w=2.0/(N*N1*P[:,N1].^2)/2.0*(b-a);
+	w=2 ./ (N*N1*P[:,N1].^2)/2 .* (b-a);
 	x = (x+1)*(b-a)/2.0+a 
 	return x,w,P
 end

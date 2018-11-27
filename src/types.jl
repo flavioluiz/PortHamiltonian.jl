@@ -38,7 +38,7 @@ end
 	Hamiltonian, constraints, etc.
 
 """
-struct Phs
+mutable struct Phs
 	J :: Array; # interconnection matrix
 	B :: Array; # control/output matrix
 	Bd :: Array; # distributed control matrix (optional)

@@ -16,9 +16,9 @@ function constraint_elimination(p :: Phs)
 		if (p.G_D .< eps()) == trues(size(p.G_D))
 			nstates = size(p.Q,1)
 			nconst = size(p.G,2)
-			Gnull = nullspace(p.G')'
+			Gnull = transpose(nullspace(copy.(transpose(p.G))))[:,:]
 			M = [Gnull; inv((p.G'*p.G)[1])*p.G']
-			Jtilde = M*p.J*M'
+			Jtilde = M*p.J*transpose(M)
 			#Minv = inv(M)
 			#Qtilde = Minv'*p.Q*Minv
 			Qtilde = M' \ (p.Q / M)
@@ -36,7 +36,7 @@ function constraint_elimination(p :: Phs)
 			newphs.StatesNames = p.StatesNames
 			
 			# damping matrix:
-			Rtilde = M*p.R*M'
+			Rtilde = M*p.R*transpose(M)
 			Rtilde11 = Rtilde[1:nstates-nconst,1:nstates-nconst]
 			newphs.R = Rtilde11
 			
@@ -55,11 +55,11 @@ function constraint_elimination(p :: Phs)
 			#                  y = Bnew' Qnew z + Dnew u
 			nconst = size(p.G,2)
 			println("non-zero, invertible G_D:");
-			Gnull = nullspace(p.G')';
-			M = [Gnull; inv((p.G'*p.G)[1])*p.G'];
-			Jtilde = M*p.J*M';
+			Gnull = nullspace(transpose(p.G))';
+			M = [Gnull; inv((transpose(p.G)*p.G)[1])*transpose(p.G)];
+			Jtilde = M*p.J*transpose(M);
 			#Minv = inv(M);
-			Qtilde = M'\ p.Q /M;
+			Qtilde = transpose(M)\ p.Q /M;
 			JD = zeros(size(p.J));
 			JD[(end-nconst+1):end,(end-nconst+1):end] = inv(p.G_D);
 			return Phs(Jtilde-JD, M*p.B, p.D, Qtilde)
