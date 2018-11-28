@@ -1,2 +1,2 @@
 julia 0.7
-ForwardDiff
+ForwardDiff 0.10.1
