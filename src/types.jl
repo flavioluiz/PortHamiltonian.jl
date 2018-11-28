@@ -68,10 +68,10 @@ mutable struct Phs
 		this.D = D
 		this.R = zeros(size(J))
 		this.Hamiltonian = Ham
-		this.TransfMatrix = eye(size(J,1))
+		this.TransfMatrix = Matrix(1I, size(J,1), size(J,1))
 		this.StatesNames = Dict()
 		this.auxvars = Dict()
-		this.InputsNames = repmat([""],size(B,2))
+		this.InputsNames = repeat([""],size(B,2))
 		this
 	end
 	"The Hamiltonian matrix Q can be used instead of the Hamiltonian function"
@@ -79,15 +79,15 @@ mutable struct Phs
 		this = new()
 		this.J = J;	this.B = B;	this.D = D;	this.Q = Q;
 		this.R = zeros(size(J))
-		Ham(x :: Array) = (0.5* x'*Q*x)[1]
+		Ham(x :: Array) = (0.5* transpose(x)*Q*x)[1]
 		this.Hamiltonian = Ham
 		GHam(x :: Array) = Q*x
 		this.GradHam = GHam
 		this.hessian = x->Q
-		this.TransfMatrix = eye(size(J,1))
+		this.TransfMatrix = Matrix(1I, size(J,1), size(J,1))
 		this.StatesNames = Dict()
 		this.auxvars = Dict()
-		this.InputsNames = repmat([""],size(B,2))
+		this.InputsNames = repeat([""],size(B,2))
 		this
 	end
 end

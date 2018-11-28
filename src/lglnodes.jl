@@ -32,11 +32,11 @@ function lglnodes(N,a,b)
 
 	xold=2;
 
-	while maximum(abs.(x-xold))>eps()
+	while maximum(abs.(x .- xold))>eps()
 
 	    xold=x;
         
-	    P[:,1]=1;    P[:,2]=x;
+	    P[:,1] .= 1;    P[:,2] = x;
     
 	    for k=2:N
 		P[:,k+1]=( (2*k-1)*x.*P[:,k]-(k-1)*P[:,k-1] )/k;
@@ -47,6 +47,6 @@ function lglnodes(N,a,b)
 	end
 
 	w=2 ./ (N*N1*P[:,N1].^2)/2 .* (b-a);
-	x = (x+1)*(b-a)/2.0+a 
+	x = (x .+ 1)*(b-a)/2.0 .+ a 
 	return x,w,P
 end

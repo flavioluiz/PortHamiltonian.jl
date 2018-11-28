@@ -1,5 +1,6 @@
 using PortHamiltonian
-using Base.Test
+using LinearAlgebra
+using Test
 
 
 tests = ["ph_discretization","ph_discretization2","ph_discretization_closed",

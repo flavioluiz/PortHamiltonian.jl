@@ -83,14 +83,15 @@ function discrete_phs2(N,a,b)
 	       p0' p0'*0;
 	      -p0d' p0'*0];
 	J = E/F
-	neworder = [1:N; (1:N)+N+2; N+1:N+2; 2*N+3:2*N+4];
+	neworder = [1:N; (1:N) .+ (N+2); N+1:N+2; 2*N+3:2*N+4];
     Jnew = J[neworder,neworder]
-    phJ = -Jnew[1:2*N,1:2*N];
-    phB = - Jnew[1:2*N, 2*N+(1:4)];
-    phD = Jnew[2*N+(1:4), 2*N+(1:4)];
+    phJ = - Jnew[1:2*N,1:2*N];
+    phB = - Jnew[1:2*N, 2*N .+ (1:4)];
+    phD = Jnew[2*N .+ (1:4), 2*N .+ (1:4)];
     
 	if N > 1
-		Q = (diagm(wx[:],0));
+		#Q = (diagm(wx[:],0));
+		Q = (diagm(0 => wx[:]));
 		Q = blkdiag(Q,Q);
 		else
 		Q = diagm([wx; wx][:]);
@@ -127,7 +128,7 @@ function discrete_phs2_distports(N,K,a,b,ad,bd)
 		warn("K < N-3: The distributed ports matrix is not exactly computed by quadrature")
 	end
 	M_theta_phizz = massmatrix(zvi,zxi,wv, leg_pol_der2);
-	M_phi = diagm(wx[:]);
+	M_phi = diagm(0 => wx[:]);
 	B_bar = M_phi \ M_theta_phizz;
 	D = dermatrix(zei,zxi,2);
 	leg_pol_der = i -> (algo_diff(x->leg_pol(x,zei,i), 1))
@@ -142,7 +143,7 @@ function discrete_phs2_distports(N,K,a,b,ad,bd)
 		 0*M M;
 	     0*pLd' pLd'
 		 0*p0' pL'];
-	F = blkdiag(F,eye(K));
+	F = blkdiag(F,Matrix(1I, K, K));
 	E = [D*0 D;
 	      pL'*0 p0d';
 	      pL'*0  -p0';
@@ -153,15 +154,15 @@ function discrete_phs2_distports(N,K,a,b,ad,bd)
 	E[1:size(D,1),end-K+1:end] = - B_bar;
     E[end-K+1:end,1:size(D,2)] =  B_bar' * M;
 	J = E/F
-	neworder = [1:N; (1:N)+N+2; N+1:N+2; 2*N+3:2*N+4; 2*N+4+(1:K)];
+	neworder = [1:N; (1:N) .+ (N+2); N+1:N+2; 2*N+3:2*N+4; (2*N+4) .+ (1:K)];
     Jnew = J[neworder,neworder]
-    phJ = -Jnew[1:2*N,1:2*N];
-    phB = - Jnew[1:2*N, 2*N+(1:4)];
-	phBdistributed = - Jnew[1:2*N, 2*N+4+(1:K)];
-    phD = Jnew[2*N+(1:4), 2*N+(1:4)];
+    phJ = - Jnew[1:2*N,1:2*N];
+    phB = - Jnew[1:2*N, 2*N .+ (1:4)];
+	phBdistributed = - Jnew[1:2*N, (2*N + 4) .+ (1:K)];
+    phD = Jnew[2*N .+ (1:4), 2*N .+ (1:4)];
     
 	if N > 1
-		Q = (diagm(wx[:],0));
+		Q = (diagm(0 => wx[:]));
 		Q = blkdiag(Q,Q);
 		else
 		Q = diagm([wx; wx][:]);

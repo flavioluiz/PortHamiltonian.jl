@@ -28,16 +28,16 @@ function eig(p :: Phs)
 	if isdefined(p, :Q)
 		if isdefined(p,:G)
 			nconst = size(p.G,2)
-			I = eye(size(p.J,1))
+			II = Matrix(1I, size(p.J,1), size(p.J,1))
 			z = zeros(nconst,nconst)
-			E = blkdiag(I,z)
+			E = blkdiag(II,z)
 			A = [p.J*p.Q p.G;
-			     p.G'*p.Q p.G_D]
-			e = eigfact(A,E)
+			     transpose(p.G)*p.Q p.G_D]
+			e = eigen(A,E)
 			ind = sortperm(imag(e.values))
 			return e.values[ind], e.vectors[ind,ind]
 		else
-			a,v = eig(p.J*p.Q)
+			a,v = eigen(p.J*p.Q)
 			ind = sortperm(imag(a))
 			return a[ind], v[:,ind]
 		end
@@ -62,12 +62,12 @@ function eigdamp(p :: Phs)
 			z = zeros(nconst,nconst)
 			E = blkdiag(I,z)
 			A = [(p.J-p.R)*p.Q p.G;
-			     p.G'*p.Q p.G_D]
+			     transpose(p.G)*p.Q p.G_D]
 			e = eigfact(A,E)
 			ind = sortperm(imag(e.values))
 			return e.values[ind], e.vectors[ind,ind]
 		else
-			a,v = eig((p.J-p.R)*p.Q)
+			a,v = eigen((p.J-p.R)*p.Q)
 			ind = sortperm(imag(a))
 			return a[ind], v[:,ind]
 		end

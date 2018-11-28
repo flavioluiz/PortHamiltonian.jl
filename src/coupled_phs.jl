@@ -23,15 +23,15 @@ function coupled_gyrator(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matrix)
 	Bnew[(N1+1):end, 1:length(inputs1)] = -ph2.B[:,ports2]*couple_matrix*ph1.D[ports1,inputs1] ;
 	
 	Jnew = blkdiag(ph1.J, ph2.J);
-	Jnew[1:N1, (N1+1):end] = ph1.B[:,ports1]*couple_matrix*(ph2.B[:,ports2].')
-	Jnew[(N1+1):end, 1:(N1)] = -ph2.B[:,ports2]*couple_matrix*(ph1.B[:,ports1].')
+	Jnew[1:N1, (N1+1):end] = ph1.B[:,ports1]*couple_matrix*(transpose(ph2.B[:,ports2]))
+	Jnew[(N1+1):end, 1:(N1)] = -ph2.B[:,ports2]*couple_matrix*(transpose(ph1.B[:,ports1]))
 	
 	Dnew = zeros(length(inputs1)+length(inputs2),length(inputs1)+length(inputs2));
 	Dnew[1:length(inputs1), 1:length(inputs1)] = ph1.D[inputs1,inputs1]
 	Dnew[length(inputs1)+1:end, length(inputs1)+1:end] = ph2.D[inputs2,inputs2]
 	Dnew[1:length(inputs1), length(inputs1)+1:end] = ph1.D[inputs1,ports1]*couple_matrix*ph2.D[ports2, inputs2];
 	Dnew[length(inputs1)+1:end, 1:length(inputs1)] = - ph2.D[inputs2, ports2]*couple_matrix*ph1.D[ports1,inputs1];
-	Qnew = blkdiag(full(ph1.Q), full(ph2.Q));
+	Qnew = blkdiag((ph1.Q), (ph2.Q));
 	phsnew = Phs(Jnew, Bnew, Dnew, Qnew)
 	phsnew.TransfMatrix = blkdiag(ph1.TransfMatrix,ph2.TransfMatrix)
 	

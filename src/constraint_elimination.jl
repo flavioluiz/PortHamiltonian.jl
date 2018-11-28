@@ -17,11 +17,11 @@ function constraint_elimination(p :: Phs)
 			nstates = size(p.Q,1)
 			nconst = size(p.G,2)
 			Gnull = transpose(nullspace(copy.(transpose(p.G))))[:,:]
-			M = [Gnull; inv((p.G'*p.G)[1])*p.G']
+			M = [Gnull; inv((transpose(p.G)*p.G)[1])*transpose(p.G)]
 			Jtilde = M*p.J*transpose(M)
 			#Minv = inv(M)
 			#Qtilde = Minv'*p.Q*Minv
-			Qtilde = M' \ (p.Q / M)
+			Qtilde = transpose(M) \ (p.Q / M)
 			J11 = Jtilde[1:nstates-nconst,1:nstates-nconst]
 			Q11 = Qtilde[1:nstates-nconst,1:nstates-nconst]
 			Q12 = Qtilde[1:nstates-nconst,(end-nconst+1):end]
@@ -29,8 +29,8 @@ function constraint_elimination(p :: Phs)
 			Q22 = Qtilde[(end-nconst+1):end,(end-nconst+1):end]
 			#Qn = Q11-Q12* inv(Q22)*Q21
 			Qn = Q11-Q12* (Q22\Q21)
-			
-			TransfMatrix = M \ [eye(nstates-nconst);-(Q22\Q21)]
+			II = Matrix(1I, nstates-nconst, nstates-nconst); # idendity
+			TransfMatrix = M \ [II;-(Q22\Q21)]
 			newphs = Phs(J11, Gnull * p.B, p.D, Qn)
 			newphs.TransfMatrix = p.TransfMatrix*TransfMatrix
 			newphs.StatesNames = p.StatesNames
