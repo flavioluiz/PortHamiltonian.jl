@@ -10,7 +10,7 @@
 #	C[al+1:end, ac+1:end] = B
 #	C
 #end
-function eig(p :: Phs)
+function eigen(p :: Phs)
 	# computes the eigenvalues and eigenvectors of a linear PHS
 	#  (which haves a Q matrix!)
 	#
@@ -86,6 +86,6 @@ function frequencies(a :: Array)
 end
 
 function frequencies(ph :: Phs)
-	a,v = eig(ph)
+	a,v = eigen(ph)
 	return frequencies(a)
 end

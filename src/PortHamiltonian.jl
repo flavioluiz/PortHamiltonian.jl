@@ -23,7 +23,7 @@ using LinearAlgebra
 # imports # 
 ########### 
 # additional functionality is added to the following functions:
-#import LinearAlgebra: eigen, nullspace
+import LinearAlgebra: eigen
 #import SparseArrays: blkdiag
 import Base: show
 
@@ -40,8 +40,7 @@ export set_constraint!,
 	   discrete_phs2,
 	   discrete_phs2_distports,
 	   finelem,
-	   damp,
-	   eig
+	   damp
 
 """
     blkdiag(x :: Array, y :: Array)	
