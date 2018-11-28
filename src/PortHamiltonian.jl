@@ -24,7 +24,7 @@ using LinearAlgebra
 ########### 
 # additional functionality is added to the following functions:
 import LinearAlgebra: eig, nullspace
-import SparseArrays: blkdiag
+#import SparseArrays: blkdiag
 import Base: show
 
 ###########

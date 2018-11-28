@@ -85,7 +85,7 @@ function coupled_transformer(ph1 :: Phs, ports1, ph2 :: Phs, ports2, couple_matr
 	G = [ph1.B[:,ports1] ; ph2.B[:,ports2]*couple_matrix]
 	GD = ph1.D[ports1,ports1] - ph2.D[ports2,ports2]*couple_matrix
 	Dnew = blkdiag(ph1.D[inputs1,inputs1], ph2.D[inputs2,inputs2])
-	Qnew = blkdiag(full(ph1.Q), full(ph2.Q));
+	Qnew = blkdiag((ph1.Q), (ph2.Q));
 	phnew = Phs(Jnew, Bnew, Dnew, Qnew)
 	set_constraint!(phnew, G, GD)
 	phnew.TransfMatrix = blkdiag(ph1.TransfMatrix,ph2.TransfMatrix)

@@ -90,7 +90,7 @@ function discrete_phs2(N,a,b)
     phD = Jnew[2*N+(1:4), 2*N+(1:4)];
     
 	if N > 1
-		Q = sparse(diagm(wx[:],0));
+		Q = (diagm(wx[:],0));
 		Q = blkdiag(Q,Q);
 		else
 		Q = diagm([wx; wx][:]);
@@ -161,7 +161,7 @@ function discrete_phs2_distports(N,K,a,b,ad,bd)
     phD = Jnew[2*N+(1:4), 2*N+(1:4)];
     
 	if N > 1
-		Q = sparse(diagm(wx[:],0));
+		Q = (diagm(wx[:],0));
 		Q = blkdiag(Q,Q);
 		else
 		Q = diagm([wx; wx][:]);
