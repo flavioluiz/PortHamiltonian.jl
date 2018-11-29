@@ -1,5 +1,7 @@
 using PortHamiltonian
 using PyPlot
+using LinearAlgebra
+using ForwardDiff
 
 include("dataexperiment.jl")
 
@@ -10,7 +12,7 @@ L = pslosh["a"];
 N = 20;
 disc = discrete_phs_closed(N, 0, L)
 
-Br = [eye(N); zeros(N,N);zeros(1,N)];
+Br = [Matrix(1I, N, N); zeros(N,N);zeros(1,N)];
 B = blkdiag(zeros(2*N,1),[1]);
 D = blkdiag(disc.D,[0]);
 Jrb = [0];
@@ -33,17 +35,16 @@ function Hamiltonian(X)
 	alpha2 = X[N+1:2*N]
 	p = X[end]
 	M = w' * (alpha1 .* alpha2)
-	H = (w'*((alpha1 .* (alpha2.^2))/rho + rho*g*((alpha1).^2)/b)/2 + ((p-M).^2)/(2*prigid["mass"]))[1]
+	H = (w'*((alpha1 .* (alpha2.^2))/rho .+ rho*g*((alpha1).^2)/b)/2 .+ ((p.-M).^2)/(2*prigid["mass"]))[1]
 	return H
 end
 
-grad = ForwardDiff.gradient(x->Hamiltonian(x))
-hess = ForwardDiff.hessian(x->Hamiltonian(x))
+hess = x->ForwardDiff.hessian(Hamiltonian, x)
 xeq = [ones(N,1)*b*hbar;zeros(N,1);0.001*prigid["mass"]*0][:]
 Qlin = hess(xeq[:])
 pfluid.Q = Qlin
 pfluid.Hamiltonian = x-> Hamiltonian(x)
-pfluid.GradHam = x-> grad(x)
+pfluid.GradHam = x-> ForwardDiff.gradient(Hamiltonian, x)
 pfluid.hessian = x-> hess(x)
 
 #pfluid.GradHam = x -> Q*x
@@ -53,18 +54,18 @@ function dynamics(t, X, Xd)
 end
 
 #
-# using Sundials
+ using Sundials
 #
-# t = (linspace(0,8,1000))
-# yout = Sundials.cvode(dynamics,xeq, [t])
-# #yout, ypout = Sundials.idasol(dynamics2, [xeq;l0;0], [xeq;0;0]*0, [t])
-# pfluid.GradHam = x-> Qlin*x
-# youtlin = Sundials.cvode(dynamics,xeq, [t])
-# #youtlin, ypoutlin = Sundials.idasol(dynamics2, [xeq;l0; 0], [xeq;0; 0]*0, [t])
-# #pn = PortHamiltonian.constraint_elimination(pfluid)
-# using PyPlot
-#
-# figure(1);
-# surf(xi,t,yout[:,N+1:end-1])
-# #surf(xi,t,yout[:,1:N])
-# #include("anima.jl")
+ t = range(0,stop = 8,length = 1000)
+ yout = Sundials.cvode(dynamics,xeq, collect(t))
+ #yout, ypout = Sundials.idasol(dynamics2, [xeq;l0;0], [xeq;0;0]*0, [t])
+ pfluid.GradHam = x-> Qlin*x
+ youtlin = Sundials.cvode(dynamics,xeq, collect(t))
+ #youtlin, ypoutlin = Sundials.idasol(dynamics2, [xeq;l0; 0], [xeq;0; 0]*0, [t])
+ #pn = PortHamiltonian.constraint_elimination(pfluid)
+ using PyPlot
+
+ figure(1);
+ surf(xi,t,yout[:,N+1:end-1])
+ #surf(xi,t,yout[:,1:N])
+ #include("anima.jl")

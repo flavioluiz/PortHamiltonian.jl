@@ -40,7 +40,8 @@ export set_constraint!,
 	   discrete_phs2,
 	   discrete_phs2_distports,
 	   finelem,
-	   damp
+	   damp,
+	   blkdiag
 
 """
     blkdiag(x :: Array, y :: Array)	

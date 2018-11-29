@@ -2,7 +2,7 @@ using PortHamiltonian
 
 # mixed finite elements (Golo)
  Nel = 15; alfa = 1; a = 0; b = 1;
- 	p = PortHamiltonian.new_spectral_element_phs_golo(Nel,alfa,a,b)
+ 	#p = PortHamiltonian.new_spectral_element_phs_golo(Nel,alfa,a,b)
 p = finelem(20,2,0,1);
 # pseudo-spectral discretization (Moulla)
 #p = discrete_phs(10,0,e-1)
@@ -25,11 +25,11 @@ function dynamics(t,x, xd)
 	xd[:] = p.J * p.GradHam(x) + p.B[:,2] * sin(freq*t) - p.B[:,1] * output(t,x)
 end
 function output(t,x)
-	return (p.B.' * p.GradHam(x) + p.D[:,2] * sin(freq*t))[1]
+	return (transpose(p.B) * p.GradHam(x) + p.D[:,2] * sin(freq*t))[1]
 end
 
 using Sundials
-to = collect(linspace(0,10/freq,10000))
+to = collect(range(0,stop = 10/freq, length = 10000))
 x0 = zeros(Ns);
 res = Sundials.cvode(dynamics, x0, to)
 

@@ -5,11 +5,11 @@ using PyPlot
 
 #surf(disc.disc_data.flow.xi,t,yout[:,1:N])
 
-plt = PyPlot
+
 # First set up the figure, the axis, and the plot element we want to animate
-fig = plt.figure()
+fig = figure()
 #ax = plt.axes(xlim=(0, 0.5), ylim=(0.00323439, 0.00323441))
-ax = plt.axes(xlim=(0, 0.5), ylim=(0.000, 0.005))
+ax = PyPlot.axes(xlim=(0, 0.5), ylim=(0.000, 0.005))
 global lines = [ax[:plot]([], [], lw=2)[1];ax[:plot]([], [], lw=2)[1]]
 
 # initialization function: plot the background of each frame
@@ -18,7 +18,7 @@ function init()
 	for line = lines
 		line[:set_data]([], [])
 	end
-	plt.legend(["Nonlinear", "Linear"])
+	legend(["Nonlinear", "Linear"])
     return (lines,None)
 end
 
